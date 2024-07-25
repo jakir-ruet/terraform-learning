@@ -1,0 +1,886 @@
+### Terraform Language Basic
+#### Introduction
+Terraform is an infrastructure as code (IaC) tool that lets you build, change, and version `cloud` and `on-prem` resources safely and efficiently. Its can manage low-level components like `compute`, `storage`, and `networking resources`, as well as high-level components like DNS entries and SaaS features.
+
+We uses declarative configuration files, written in HashiCorp Configuration Language (HCL) or JSON, to define and automate the lifecycle of resources, ensuring predictability and consistency. Terraform's extensible plugin-based architecture supports a wide range of providers, enabling seamless integration and management of diverse infrastructure environments.
+
+#### How does Terraform work?
+Terraform creates and manages resources on cloud platforms and other services through their application programming interfaces (APIs). Providers (AWS, Azure, GCP) enable Terraform to work with virtually any platform or service with an accessible API. The core Terraform workflow consists of `three` stages:
+![Terraform Work](/img/how-work.png)
+
+- **Write:** You define resources, which may be across multiple cloud providers and services. For example, you might create a configuration to deploy an application on virtual machines in a Virtual Private Cloud (VPC) network with security groups and a load balancer.
+- **Plan:** Terraform creates an execution plan describing the infrastructure it will create, update, or destroy based on the existing infrastructure and your configuration.
+- **Apply:** On approval, Terraform performs the proposed operations in the correct order, respecting any resource dependencies. For example, if you update the properties of a VPC and change the number of virtual machines in that VPC, Terraform will recreate the VPC before scaling the virtual machines.
+![Workflow Stages](/img/workflow-stage.png)
+
+#### Benefits of using Terraform?
+Terraform revolutionized infrastructure management by introducing the concept of Infrastructure as Code (laC), which inherently takes advantage of these advancements to manage infrastructure more effectively. Lets' take a look at a few of the benefits Terraform has to offer.
+- Consistency: 
+- Automation: 
+- Less Risk:
+- Modular & DRY: 
+
+#### Key Features
+Some of the key features of Terraform that make it a versatile and powerful tool for managing infrastructure include:
+- Declarative
+- Cloud Agnostic
+- Ecosystem
+- Extendible
+- Agent less
+
+#### [Installation](https://developer.hashicorp.com/terraform/install)
+#### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
+Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
+- AWS (Amazon Web Services)
+- Azure (Microsoft Azure)
+- Google Cloud Platform (GCP)
+- Kubernetes
+Many others are available and can be found in the [Terraform Registry](https://registry.terraform.io/browse/providers).
+```json
+provider "aws" {
+  region = "us-west-2"
+}
+```
+
+#### [Terraform Resources](https://developer.hashicorp.com/terraform/language/resources)
+A resource is a component that manages the infrastructure object, such as a virtual machine, a database, or a network. Resources are defined in Terraform configuration files and represent the desired state of an infrastructure component. Terraform then uses these configurations to create, update, and manage the actual infrastructure resources in a cloud or on-premises environment.
+```json
+provider "aws" {
+  region = "us-west-2"
+}
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "ExampleInstance"
+  }
+}
+```
+**Creating & Managing Resources**
+- `Initialize:` Run terraform init to initialize the configuration and download the necessary provider plugins.
+  `terraform init`
+- `Plan:` Run terraform plan to see the changes that Terraform will make to achieve the desired state defined in the configuration. `terraform plan`
+- `Apply:` Run terraform apply to apply the changes and create/update/delete resources. `terraform apply`
+- `Destroy:` Run terraform destroy to remove all resources defined in the configuration. `terraform destroy`
+
+#### [Command Line Interface (CLI)](https://developer.hashicorp.com/terraform/cli)
+Terraform Command Line Interface (CLI) to manage infrastructure, and interact with Terraform state, providers, configuration files, and Terraform Cloud.
+
+The Terraform CLI is a command-line tool used to manage infrastructure as code (IaC). It enables users to define, preview, and apply changes to infrastructure resources using configuration files written in HashiCorp Configuration Language (HCL) or JSON. Below is a detailed overview of the Terraform CLI commands and their usage:
+
+#### Terraform Variables
+Terraform variables allow you to customize and parameterize your Terraform configurations. They enable you to pass dynamic values into your Terraform scripts, making your infrastructure code more flexible and reusable.
+
+```json
+# Simple string variable
+variable "region" {
+  description = "The AWS region to deploy resources in"
+  type        = string
+  default     = "us-west-2"
+}
+
+# Variable with validation
+variable "environment" {
+  description = "The environment to deploy resources in"
+  type        = string
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be one of dev, staging, or prod"
+  }
+}
+
+# List variable
+variable "availability_zones" {
+  description = "A list of availability zones to deploy resources in"
+  type        = list(string)
+  default     = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+
+# Map variable
+variable "tags" {
+  description = "A map of tags to apply to resources"
+  type        = map(string)
+  default     = {
+    "environment" = "dev"
+    "owner"       = "admin"
+  }
+}
+```
+Use Variables
+```json
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_instance" "example" {
+  ami               = "ami-123456"
+  instance_type     = "t2.micro"
+  availability_zone = var.availability_zones[0]
+  tags              = var.tags
+}
+```
+**Types of Variable**
+- **Input Variable** Its used to parameterize your Terraform configurations. They allow you to pass values into your modules/configurations from outside. Its define within a module or at the root level of your configuration.
+```json
+variable "ami" {
+  type        = string
+  description = "Ubuntu ami_id"
+}
+variable "instance_type" {
+  type        = string
+  description = "Instance type"
+}
+variable "name_tag" {
+  type        = string
+  Description = "name of EC2 instance"
+}
+```
+Use of input variable
+```json
+resource "aws_instance" "my-aws-instance" {
+  ami           = var.ami
+  instance_type = var.instance_type
+  
+  tags = {
+    Name = var.name_tag
+  }
+}
+```
+
+- **Output Variable:** Its allow you to expose the values from your module/configuration, making them available fro use in other parts of your Terraform setup.
+```json
+output "public_ip" {
+  value       = aws_instance.my_vm.public_ip 
+  description = "Public I P Address o f EC2 instance"
+}
+output "instance_id" {
+  value       = aws_instance.my_vm.id 
+  description = "Instance ID"
+}
+```
+**Conditional Operators**
+Its allow you to perform simple if-else logic within your configuration. This is useful for setting values based on conditions, enabling more dynamic and flexible infrastructure definitions. The primary conditional operator in Terraform is the ternary operator, which follows this syntax:
+```bash
+condition ? true_value : false_value
+```
+Use of Conditional Operators
+```json
+variable "environment" {
+  description = "The environment to deploy resources in"
+  type        = string
+  default     = "dev"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = var.environment == "prod" ? "t2.large" : "t2.micro"
+}
+```
+
+#### [Built-in Functions](https://developer.hashicorp.com/terraform/language/functions)
+Terraform has a variety of built-in functions that can be used to perform various operations within your configurations. These functions are divided into several categories based on their use cases:
+
+**String Functions**
+`chomp:` Removes trailing newline from a string.
+```json
+output "result" {
+  value = chomp("Hello\n")
+}
+# result: "Hello"
+```
+`format:` Produces a formatted string.
+```json
+output "result" {
+  value = format("Hello, %s!", "world")
+}
+# result: "Hello, world!"
+```
+`formatlist:` Produces a list of formatted strings.
+```json
+output "result" {
+  value = formatlist("Hello, %s!", ["Alice", "Bob"])
+}
+# result: ["Hello, Alice!", "Hello, Bob!"]
+```
+`join:` Concatenates a list of strings into a single string with a specified separator.
+```json
+output "result" {
+  value = join(", ", ["one", "two", "three"])
+}
+# result: "one, two, three"
+```
+`lower:` Converts a string to lowercase.
+```json
+output "result" {
+  value = lower("Hello, World!")
+}
+# result: "hello, world!"
+```
+`replace:` Replaces occurrences of a substring within a string.
+```json
+output "result" {
+  value = replace("Hello, World!", "World", "Terraform")
+}
+# result: "Hello, Terraform!"
+```
+`split:` Splits a string into a list of substrings.
+```json
+output "result" {
+  value = split(", ", "one, two, three")
+}
+# result: ["one", "two", "three"]
+```
+`trimspace:` Removes leading and trailing whitespace from a string.
+```json
+output "result" {
+  value = trimspace("   Hello, World!   ")
+}
+# result: "Hello, World!"
+```
+`upper:` Converts a string to uppercase.
+```json
+output "result" {
+  value = upper("Hello, World!")
+}
+# result: "HELLO, WORLD!"
+```
+
+**Numeric Functions**
+`abs:` Returns the absolute value of a number.
+```json
+output "result" {
+  value = abs(-42)
+}
+# result: 42
+```
+`ceil:` Rounds a number up to the nearest integer.
+```json
+output "result" {
+  value = ceil(7.2)
+}
+# result: 8
+```
+`floor:` Rounds a number down to the nearest integer.
+```json
+output "result" {
+  value = floor(7.8)
+}
+# result: 7
+```
+`max:` Returns the maximum value from a list of numbers.
+```json
+output "result" {
+  value = max(1, 2, 3, 4, 5)
+}
+# result: 5
+```
+`min:` Returns the minimum value from a list of numbers.
+```json
+output "result" {
+  value = min(1, 2, 3, 4, 5)
+}
+# result: 1
+```
+
+**Collection Functions**
+`chunklist:` Splits a list into chunks of a specified size.
+```json
+output "result" {
+  value = chunklist([1, 2, 3, 4, 5, 6], 2)
+}
+# result: [[1, 2], [3, 4], [5, 6]]
+```
+`coalescelist:` Returns the first non-empty list from a list of lists.
+```json
+output "result" {
+  value = coalescelist([], [1, 2], [3, 4])
+}
+# result: [1, 2]
+```
+`compact:` Removes empty string elements from a list.
+```json
+output "result" {
+  value = compact(["one", "", "three"])
+}
+# result: ["one", "three"]
+```
+`concat:` Concatenates multiple lists into one list.
+```json
+output "result" {
+  value = concat(["one", "two"], ["three", "four"])
+}
+# result: ["one", "two", "three", "four"]
+```
+`contains:` Checks if a list contains a given element.
+```json
+output "result" {
+  value = contains(["one", "two", "three"], "two")
+}
+# result: true
+```
+`distinct:` Removes duplicate elements from a list.
+```json
+output "result" {
+  value = distinct(["one", "two", "one", "three"])
+}
+# result: ["one", "two", "three"]
+```
+`element:` Returns the element at a specified index in a list.
+```json
+output "result" {
+  value = element(["one", "two", "three"], 1)
+}
+# result: "two"
+```
+`flatten:` Flattens a list of lists into a single list.
+```json
+output "result" {
+  value = flatten([["one", "two"], ["three", "four"]])
+}
+# result: ["one", "two", "three", "four"]
+```
+`index:` Returns the index of the first occurrence of an element in a list.
+```json
+output "result" {
+  value = index(["one", "two", "three"], "two")
+}
+# result: 1
+```
+`keys:` Returns a list of keys from a map.
+```json
+output "result" {
+  value = keys({a = 1, b = 2, c = 3})
+}
+# result: ["a", "b", "c"]
+```
+`length:` Returns the length of a list, map, or string.
+```json
+output "result" {
+  value = length(["one", "two", "three"])
+}
+# result: 3
+```
+`lookup:` Retrieves the value of a key from a map.
+```json
+output "result" {
+  value = lookup({a = 1, b = 2}, "b", 0)
+}
+# result: 2
+```
+`merge:` Merges multiple maps into one map.
+```json
+output "result" {
+  value = merge({a = 1, b = 2}, {c = 3})
+}
+# result: {a = 1, b = 2, c = 3}
+```
+`range:` Generates a list of numbers within a specified range.
+```json
+output "result" {
+  value = range(5)
+}
+# result: [0, 1, 2, 3, 4]
+```
+`reverse:` Reverses the order of elements in a list.
+```json
+output "result" {
+  value = reverse(["one", "two", "three"])
+}
+# result: ["three", "two", "one"]
+```
+`setintersection:` Returns the common elements in two lists.
+```json
+output "result" {
+  value = setintersection(["one", "two"], ["two", "three"])
+}
+# result: ["two"]
+```
+`setsubtract:` Returns the elements in one list that are not in another list.
+```json
+output "result" {
+  value = setsubtract(["one", "two"], ["two", "three"])
+}
+# result: ["one"]
+```
+`setunion:` Returns the union of two lists.
+```json
+output "result" {
+  value = setunion(["one", "two"], ["two", "three"])
+}
+# result: ["one", "two", "three"]
+```
+`slice:` Extracts a portion of a list.
+```json
+output "result" {
+  value = slice(["one", "two", "three", "four"], 1, 3)
+}
+# result: ["two", "three"]
+```
+`sort:` Sorts a list of strings.
+```json
+output "result" {
+  value = sort(["three", "one", "two"])
+}
+# result: ["one", "two", "three"]
+```
+`transpose:` Transposes a list of lists.
+```json
+output "result" {
+  value = transpose([["a", "b"], ["c", "d"]])
+}
+# result: [["a", "c"], ["b", "d"]]
+```
+`values:` Returns a list of values from a map.
+```json
+output "result" {
+  value = values({a = 1, b = 2, c = 3})
+}
+# result: [1, 2, 3]
+```
+`zipmap:` Creates a map from a list of keys and a list of values.
+```json
+output "result" {
+  value = zipmap(["a", "b", "c"], [1, 2, 3])
+}
+# result: {a = 1, b = 2, c = 3}
+```
+
+**Date and Time Functions**
+`formatdate:` Formats a timestamp according to a specified layout.
+```json
+output "result" {
+  value = formatdate("DD/MM/YYYY", "2024-07-25T14:00:00Z")
+}
+# result: "25/07/2024"
+```
+`timeadd:` Adds a duration to a timestamp.
+```json
+output "result" {
+  value = timeadd("2024-07-25T14:00:00Z", "72h")
+}
+# result: "2024-07-28T14:00:00Z"
+```
+
+**Filesystem Functions**
+`file:` Reads the contents of a file.
+```json
+output "result" {
+  value = file("example.txt")
+}
+# result: (contents of example.txt)
+```
+`filebase64:` Reads the contents of a file and encodes it as base64.
+```json
+output "result" {
+  value = filebase64("example.txt")
+```
+`filebase64sha256:` Reads the contents of a file, encodes it as base64, and computes its SHA-256 hash.
+```json
+
+```
+`filebase64sha512:` Reads the contents of a file, encodes it as base64, and computes its SHA-512 hash.
+```json
+output "file_base64_sha512_hash" {
+  value = filebase64sha512("example.txt")
+}
+```
+`filemd5:` Reads the contents of a file and computes its MD5 hash.
+```json
+output "file_md5_hash" {
+  value = filemd5("example.txt")
+}
+```
+`filesha1:` Reads the contents of a file and computes its SHA-1 hash.
+```json
+output "file_sha1_hash" {
+  value = filesha1("example.txt")
+}
+```
+`filesha256:` Reads the contents of a file and computes its SHA-256 hash.
+```json
+output "file_sha256_hash" {
+  value = filesha256("example.txt")
+}
+```
+`filesha512:` Reads the contents of a file and computes its SHA-512 hash.
+```json
+output "file_sha512_hash" {
+  value = filesha512("example.txt")
+}
+```
+`templatefile:` Renders a template file with the provided variables.
+```json
+Hello, ${name}!
+Welcome to ${location}.
+```
+```json
+variable "name" {
+  default = "John Doe"
+}
+
+variable "location" {
+  default = "Terraform World"
+}
+
+output "greeting" {
+  value = templatefile("example.tpl", {
+    name     = var.name
+    location = var.location
+  })
+}
+```
+**Encoding Functions**
+`base64decode:` Decodes a base64-encoded string.
+```json
+output "decoded_string" {
+  value = base64decode("SGVsbG8gV29ybGQh")
+}
+# result: "Hello World!"
+```
+`base64encode:` Encodes a string as base64.
+```json
+output "encoded_string" {
+  value = base64encode("Hello World!")
+}
+# result: "SGVsbG8gV29ybGQh"
+```
+`base64gzip:` Compresses a string and encodes it as base64.
+```json
+output "base64_gzip_encoded_string" {
+  value = base64gzip("Hello World!")
+}
+# result: The base64-encoded, gzip-compressed version of "Hello World!"
+```
+`base64sha256:` Computes the SHA-256 hash of a string and encodes it as base64.
+```json
+output "base64_sha256_hash" {
+  value = base64sha256("Hello World!")
+}
+# result: The base64-encoded SHA-256 hash of "Hello World!"
+```
+`base64sha512:` Computes the SHA-512 hash of a string and encodes it as base64.
+```json
+output "base64_sha512_hash" {
+  value = base64sha512("Hello World!")
+}
+# result: The base64-encoded SHA-512 hash of "Hello World!"
+```
+`bcrypt:` Hashes a string using bcrypt.
+```json
+output "bcrypt_hash" {
+  value = bcrypt("password123")
+}
+# result: The bcrypt hash of "password123"
+```
+`csvdecode:` Parses a CSV string into a list of maps.
+```json
+output "csv_decoded" {
+  value = csvdecode("name,age\nJohn Doe,30\nJane Doe,25")
+}
+# result: [
+#   { name = "John Doe", age = "30" },
+#   { name = "Jane Doe", age = "25" }
+# ]
+```
+`jsondecode:` Parses a JSON string into a map or list.
+```json
+output "json_decoded" {
+  value = jsondecode("{\"name\":\"John Doe\",\"age\":30}")
+}
+# result: {
+#   name = "John Doe"
+#   age  = 30
+# }
+```
+`jsonencode:` Encodes a map or list as a JSON string.
+```json
+output "json_encoded" {
+  value = jsonencode({
+    name = "John Doe"
+    age  = 30
+  })
+}
+# result: "{\"name\":\"John Doe\",\"age\":30}"
+```
+`urlencode:` Encodes a string as a URL component.
+```json
+output "url_encoded" {
+  value = urlencode("Hello World!")
+}
+# result: "Hello%20World%21"
+```
+`yamldecode:` Parses a YAML string into a map or list.
+```json
+output "yaml_decoded" {
+  value = yamldecode("name: John Doe\nage: 30")
+}
+# result: {
+#   name = "John Doe"
+#   age  = 30
+# }
+```
+`yamlencode:` Encodes a map or list as a YAML string.
+```json
+output "yaml_encoded" {
+  value = yamlencode({
+    name = "John Doe"
+    age  = 30
+  })
+}
+# result: "age: 30\nname: John Doe\n"
+```
+
+**Hash and Crypto Functions**
+`bcrypt:` Generates a bcrypt hash of a string.
+```json
+output "file_sha512_hash" {
+  value = filesha512("example.txt")
+}
+# result: The SHA-512 hash of the file contents
+```
+`md5:` Computes the MD5 hash of a string.
+```json
+output "md5_hash" {
+  value = md5("Hello World!")
+}
+# result: The MD5 hash of the string "Hello World!"
+```
+`sha1:` Computes the SHA-1 hash of a string.
+```json
+output "sha1_hash" {
+  value = sha1("Hello World!")
+}
+# result: The SHA-1 hash of the string "Hello World!"
+```
+`sha256:` Computes the SHA-256 hash of a string.
+```json
+output "sha256_hash" {
+  value = sha256("Hello World!")
+}
+# result: The SHA-256 hash of the string "Hello World!"
+```
+`sha512:` Computes the SHA-512 hash of a string.
+```json
+output "sha512_hash" {
+  value = sha512("Hello World!")
+}
+# result: The SHA-512 hash of the string "Hello World!"
+```
+
+**IP Network Functions**
+`cidrhost:` Calculates an IP address within a CIDR block.
+```json
+output "host_ip" {
+  value = cidrhost("192.168.1.0/24", 10)
+}
+# result: "192.168.1.10"
+```
+`cidrnetmask:` Computes the netmask of a CIDR block.
+```json
+output "netmask" {
+  value = cidrnetmask("192.168.1.0/24")
+}
+# result: "255.255.255.0"
+```
+`cidrsubnet:` Computes a subnet within a CIDR block.
+```json
+output "subnet" {
+  value = cidrsubnet("10.0.0.0/8", 8, 5)
+}
+# result: "10.5.0.0/16"
+```
+`cidrsubnets:` Computes multiple subnets within a CIDR block.
+```json
+output "subnets" {
+  value = cidrsubnets("10.0.0.0/8", 4, 4)
+}
+# result: ["10.0.0.0/12", "10.16.0.0/12", "10.32.0.0/12", "10.48.0.0/12"]
+```
+
+**Type Conversion Functions**
+`tobool:` Converts a value to a boolean.
+```json
+output "to_bool_true" {
+  value = tobool("true")
+}
+# result: true
+
+output "to_bool_false" {
+  value = tobool("false")
+}
+# result: false
+```
+`toint:` Converts a value to an integer.
+```json
+variable "string_number" {
+  default = "42"
+}
+
+locals {
+  integer_value = toint(var.string_number)
+}
+
+output "integer_value" {
+  value = local.integer_value
+}
+```
+`tolist:` Converts a value to a list.
+```json
+output "to_list" {
+  value = tolist(["one", "two", "three"])
+}
+# result: ["one", "two", "three"]
+```
+`map:` Converts a value to a map.
+```json
+output "to_map" {
+  value = tomap({
+    "key1" = "value1",
+    "key2" = "value2"
+  })
+}
+# result: {
+#   "key1" = "value1",
+#   "key2" = "value2"
+# }
+```
+`tonumber:` Converts a value to a number.
+```json
+output "to_number" {
+  value = tonumber("42")
+}
+# result: 42
+```
+`toset:` Converts a value to a set.
+```json
+output "to_set" {
+  value = toset(["a", "b", "c"])
+}
+# result: ["a", "b", "c"]
+```
+`tostring:` Converts a value to a string.
+```json
+output "to_string" {
+  value = tostring(42)
+}
+# result: "42"
+```
+
+#### [Modules](https://developer.hashicorp.com/terraform/language/modules)
+In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
+
+**Key Concepts**
+- `Root Module:` The configuration in the main directory where you run terraform apply. It can include other modules but is not itself considered a module.
+- `Child Modules:` Modules that are called or referenced from other modules. They can be defined in separate directories or included from external sources.
+- `Module Source:` The location from where a module is retrieved. It can be a local path, a Git repository, a Terraform Registry, or other sources.
+
+**Basic Structure** As an example create a directory for the module `my-network-module`.
+- `my-network-module/`
+  - `main.tf`
+  - `variables.tf`
+  - `outputs.tf`
+
+**Benefits of Modules**
+- Modularity
+- Reusability
+- Simplified Collaboration
+- Versioning & Maintenances
+- Abstraction
+- Testing & Validation
+- Scalability
+- Security & Compliance
+- Keep Modules DRY
+
+#### [State Management](https://developer.hashicorp.com/terraform/language/state)
+State management in Terraform is a crucial concept for tracking and managing the resources that Terraform creates, updates, and deletes. Here’s a detailed overview of state management in Terraform:
+
+**State**
+Terraform state is a file that tracks the resources managed by Terraform. It acts as a source of truth for Terraform about the infrastructure it manages, storing information about resource attributes and metadata.
+
+#### Remote Backends
+
+
+
+
+
+
+
+
+
+
+
+
+Understanding basic of terraform
+- Blocks
+- Arguments
+- Attributes & Meta-Arguments
+- Identifiers
+- Comments
+
+#### Syntax Template
+<BlockType> "BlockLabel" "BlockLabel" {
+   # BlockBody
+   <Identifier> = <Expression> # Argument
+}
+
+```json
+terraform {
+  required_version = "~> 0.14.3" # required
+  # required provider & its version
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 3.21" # optional but recommended
+    }
+  }
+  # remote backend for storing tf state in S3
+  backend "s3" {
+    bucket = "my-bucket"
+    key = "path/to/my/key"
+    region = "us-east-1"
+  }
+  # experimental feature (not required)
+  experiments = [example]
+  # passing metadata to providers
+  provider_meta "my-provider" {
+    hello = "Welcome to Terraform"
+  }
+}
+```
+
+#### Block Types
+- setting block
+- fundamental block
+  - terraform block
+  - provider block
+  - resource block
+- configuration block
+- variable block
+  - input variable block
+  - output variable block
+  - local values block
+- calling/referencing block
+  - data sources block
+  - modules block
+
+**terraform block feature**
+- use only constant values
+- arguments may not refer to named objects such as resources, input variables etc.
+- may not use any of the terraform language build-in functions
+- use for some behaviors configure
+- terraform version required
+- providers list required
+- terraform backend
+
+**provider block feature**
+- Heart of terraform
+- terraform relies on providers to interact with remote systems
+- declare providers for terraform to install providers & use the
+- provider configurations belong to root module
+
+**resource block feature**
+- in each resource block describes one/more infrastructure objects
+- follow resource declarations syntax & behavior
+- working as provision maker
+
+
