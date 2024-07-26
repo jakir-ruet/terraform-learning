@@ -875,6 +875,7 @@ A Terraform state file is a JSON file that contains detailed information about t
 
 #### Remote Backend
 A remote backend in Terraform is a mechanism for storing the Terraform state file in a remote location instead of locally on your machine. This is crucial for collaborative projects, larger infrastructures, and when you need increased reliability and security for your state data.
+
 **Use Case**
 - **Collaboration:** Multiple team members can access and modify the state file simultaneously.
 - **Reliability:** The state file is stored in a highly available and durable storage system.
