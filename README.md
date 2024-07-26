@@ -880,6 +880,7 @@ A remote backend in Terraform is a mechanism for storing the Terraform state fil
 - **Versioning:** Many remote backends support state versioning, allowing you to revert to previous states if needed.
 
 **Common Remote Backend Options**
+
 Terraform offers several built-in remote backend options:
 - **Amazon S3:** Object storage provided by AWS.
 - **Azure Blob Storage:** Object storage provided by Azure.
@@ -900,6 +901,7 @@ terraform {
 ```
 
 **Overcoming the disadvantage of Staticfile (e.g., S3)**
+
 To address and overcome the disadvantages of using a static state file in Terraform, particularly when stored in a remote backend like Amazon S3, consider implementing the following best practices and strategies:
 1. State Locking: When using S3 as a backend, pair it with a state locking mechanism like DynamoDB. This prevents concurrent modifications and ensures that only one process can modify the state file at a time.
 ```json
