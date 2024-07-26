@@ -165,6 +165,7 @@ output "instance_id" {
 }
 ```
 **Conditional Operators**
+
 Its allow you to perform simple if-else logic within your configuration. This is useful for setting values based on conditions, enabling more dynamic and flexible infrastructure definitions. The primary conditional operator in Terraform is the ternary operator, which follows this syntax:
 ```bash
 condition ? true_value : false_value
@@ -187,6 +188,7 @@ resource "aws_instance" "example" {
 Terraform has a variety of built-in functions that can be used to perform various operations within your configurations. These functions are divided into several categories based on their use cases:
 
 **String Functions**
+
 `chomp:` Removes trailing newline from a string.
 ```json
 output "result" {
@@ -252,6 +254,7 @@ output "result" {
 ```
 
 **Numeric Functions**
+
 `abs:` Returns the absolute value of a number.
 ```json
 output "result" {
@@ -289,6 +292,7 @@ output "result" {
 ```
 
 **Collection Functions**
+
 `chunklist:` Splits a list into chunks of a specified size.
 ```json
 output "result" {
@@ -452,6 +456,7 @@ output "result" {
 ```
 
 **Date and Time Functions**
+
 `formatdate:` Formats a timestamp according to a specified layout.
 ```json
 output "result" {
@@ -468,6 +473,7 @@ output "result" {
 ```
 
 **Filesystem Functions**
+
 `file:` Reads the contents of a file.
 ```json
 output "result" {
@@ -536,6 +542,7 @@ output "greeting" {
 }
 ```
 **Encoding Functions**
+
 `base64decode:` Decodes a base64-encoded string.
 ```json
 output "decoded_string" {
@@ -637,6 +644,7 @@ output "yaml_encoded" {
 ```
 
 **Hash and Crypto Functions**
+
 `bcrypt:` Generates a bcrypt hash of a string.
 ```json
 output "file_sha512_hash" {
@@ -674,6 +682,7 @@ output "sha512_hash" {
 ```
 
 **IP Network Functions**
+
 `cidrhost:` Calculates an IP address within a CIDR block.
 ```json
 output "host_ip" {
@@ -704,6 +713,7 @@ output "subnets" {
 ```
 
 **Type Conversion Functions**
+
 `tobool:` Converts a value to a boolean.
 ```json
 output "to_bool_true" {
