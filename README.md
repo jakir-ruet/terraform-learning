@@ -949,7 +949,49 @@ terraform {
 }
 ```
 
+#### [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
+Provisioners in Terraform are used to execute scripts or commands on a local or remote machine as part of the resource creation or destruction process. They can be used to bootstrap resources, configure servers, or run any other kind of initialization.
 
+**Types of Provisioners**
+
+- **File Provisioner:** Copies files or directories from the machine executing Terraform to the newly created resource.
+  ```json
+  provisioner "file" {
+    source      = "path/to/local/file"
+    destination = "/path/to/remote/destination"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/my-key.pem")
+      host        = self.public_ip
+    }
+  }
+  ```
+
+- **Local-Exec Provisioner:** Executes a command on the machine running Terraform.
+  ```json
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.example.public_ip} >> ip_addresses.txt"
+  }
+  ```
+
+- **Remote-Exec Provisioner:** Executes scripts or commands on the resource being created.
+  ```json
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y nginx"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/my-key.pem")
+      host        = self.public_ip
+    }
+  }
+  ```
 
 
 
