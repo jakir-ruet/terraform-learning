@@ -13,7 +13,10 @@ Terraform is an infrastructure as code (IaC) tool that lets you build, change, a
 Terraform creates and manages resources on cloud platforms and other services through their application programming interfaces (APIs). Providers (AWS, Azure, GCP) enable Terraform to work with virtually any platform or service with an accessible API. The core Terraform workflow consists of `three` stages:
 ![Terraform Work](/img/how-work.png)
 
-- **Write:** You define resources, which may be across multiple cloud providers and services. For example, you might create a configuration to deploy an application on virtual machines in a Virtual Private Cloud (VPC) network with security groups and a load balancer.
+- **Write:** In the writing phase, you create configuration files using HashiCorp Configuration Language (HCL) or JSON. These configuration files define the desired state of your infrastructure.
+  - **Configuration Files:** These files include resources, variables, providers, and modules.
+  - **Providers:** Define the infrastructure providers (e.g., AWS, Azure, Google Cloud).
+  - **Resources:** Define the components of your infrastructure (e.g., EC2 instances, Virtual Private Cloud `VPC` S3 buckets).
 - **Plan:** Terraform creates an execution plan describing the infrastructure it will create, update, or destroy based on the existing infrastructure and your configuration.
 - **Apply:** On approval, Terraform performs the proposed operations in the correct order, respecting any resource dependencies. For example, if you update the properties of a VPC and change the number of virtual machines in that VPC, Terraform will recreate the VPC before scaling the virtual machines.
 ![Workflow Stages](/img/workflow-stage.png)
@@ -33,7 +36,33 @@ Some of the key features of Terraform that make it a versatile and powerful tool
 - Extendible
 - Agent less
 
-#### [Installation](https://developer.hashicorp.com/terraform/install)
+#### [Installation of Terraform](https://developer.hashicorp.com/terraform/install)
+Install in CodeSpace
+```bash
+wget https://releases.hashicorp.com/terraform/1.4.5/terraform_1.4.5_linux_amd64.zip
+unzip terraform_1.4.5_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+terraform --version
+```
+If any problem related to path variable
+```bash
+export PATH=$PATH:/usr/local/bin
+source ~/.bashrc
+```
+
+#### [Installation of AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+```bash
+aws --version
+aws configure
+```
+Configuration `Identity and Access Management (IAM)` on AWS Console.
+- AWS Access Key ID [None]: Put your ID here and press Enter.
+- AWS Secret Access Key [None]: Put your secret key here and press Enter
+- Default region name [None]: us-east-1
+- Default output format [None]: json
+- Check the users `aws iam list-users`
+- Check the s3 resources `aws s3 ls`
+
 #### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
 Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
 - AWS (Amazon Web Services)
