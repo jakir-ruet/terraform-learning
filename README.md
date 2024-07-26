@@ -40,7 +40,7 @@ Terraform providers are plugins that enable Terraform to manage different infras
 - Azure (Microsoft Azure)
 - Google Cloud Platform (GCP)
 - Kubernetes
-- 
+
 Many others are available and can be found in the [Terraform Registry](https://registry.terraform.io/browse/providers).
 ```json
 provider "aws" {
