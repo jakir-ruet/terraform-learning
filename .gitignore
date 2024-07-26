@@ -1,4 +1,6 @@
 /.vscode
 /.idea
-/.DS_Store
-/img/.DS_Store
+/.DS_Store*
+/img/.DS_Store*
+/02-module/.DS_Store* 
+/02-module/modules/.DS_Store*
