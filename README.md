@@ -844,7 +844,7 @@ State management in Terraform is a crucial concept for tracking and managing the
 **State**
 Terraform state is a file that tracks the resources managed by Terraform. It acts as a source of truth for Terraform about the infrastructure it manages, storing information about resource attributes and metadata.
 
-**Staticfile**
+**Statefile**
 A Terraform state file is a JSON file that contains detailed information about the resources managed by Terraform. This file, often named `terraform.tfstate`, is a JSON or HCL (HashiCorp Configuration Language) formatted file that contains important information about the infrastructure's current state, such as resource attributes, dependencies, and metadata. Here’s a simplified example of what a state file might look like:
 ```json
 {
