@@ -77,6 +77,33 @@ provider "aws" {
 }
 ```
 
+#### [Modules](https://developer.hashicorp.com/terraform/language/modules)
+In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
+
+**Key Concepts**
+- `Root Module:` The configuration in the main directory where you run terraform apply. It can include other modules but is not itself considered a module.
+- `Child Modules:` Modules that are called or referenced from other modules. They can be defined in separate directories or included from external sources.
+- `Module Source:` The location from where a module is retrieved. It can be a local path, a Git repository, a Terraform Registry, or other sources.
+
+**Basic Structure** 
+
+As an example create a directory for the module `my-network-module`.
+- `my-network-module/`
+  - `main.tf`
+  - `variables.tf`
+  - `outputs.tf`
+
+**Benefits of Modules**
+- Modularity
+- Reusability
+- Simplified Collaboration
+- Versioning & Maintenances
+- Abstraction
+- Testing & Validation
+- Scalability
+- Security & Compliance
+- Keep Modules DRY
+
 #### [Terraform Resources](https://developer.hashicorp.com/terraform/language/resources)
 A resource is a component that manages the infrastructure object, such as a virtual machine, a database, or a network. Resources are defined in Terraform configuration files and represent the desired state of an infrastructure component. Terraform then uses these configurations to create, update, and manage the actual infrastructure resources in a cloud or on-premises environment.
 ```json
@@ -810,33 +837,6 @@ output "to_string" {
 }
 # result: "42"
 ```
-
-#### [Modules](https://developer.hashicorp.com/terraform/language/modules)
-In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
-
-**Key Concepts**
-- `Root Module:` The configuration in the main directory where you run terraform apply. It can include other modules but is not itself considered a module.
-- `Child Modules:` Modules that are called or referenced from other modules. They can be defined in separate directories or included from external sources.
-- `Module Source:` The location from where a module is retrieved. It can be a local path, a Git repository, a Terraform Registry, or other sources.
-
-**Basic Structure** 
-
-As an example create a directory for the module `my-network-module`.
-- `my-network-module/`
-  - `main.tf`
-  - `variables.tf`
-  - `outputs.tf`
-
-**Benefits of Modules**
-- Modularity
-- Reusability
-- Simplified Collaboration
-- Versioning & Maintenances
-- Abstraction
-- Testing & Validation
-- Scalability
-- Security & Compliance
-- Keep Modules DRY
 
 #### [State Management](https://developer.hashicorp.com/terraform/language/state)
 State management in Terraform is a crucial concept for tracking and managing the resources that Terraform `creates`, `updates`, and `deletes`. In Terraform, the `statefile` and `remote backend` are crucial components for managing and maintaining infrastructure as code. Here’s a detailed overview of state management in Terraform:
