@@ -993,6 +993,31 @@ Provisioners in Terraform are used to execute scripts or commands on a local or 
   }
   ```
 
+  #### [Workspaces](https://developer.hashicorp.com/terraform/cloud-docs/workspaces)
+  In Terraform, a workspace is an isolated environment that allows you to manage multiple states for a given configuration. Workspaces are useful when you need to manage multiple environments (e.g., development, staging, production) from the same configuration.
+
+  **Prerequisites**
+
+- An HCP Terraform account and organization
+- Terraform v1.1+ installed locally and configured with your HCP Terraform token
+- An AWS account
+- A GitHub account
+
+Key Concepts
+- **Default Workspace:** Every Terraform configuration starts with a single workspace named `default`. All commands that manage state, plan, and apply changes are done in this default workspace unless otherwise specified.
+- **Custom Workspaces:** You can create additional workspaces to manage different states.
+
+```bash
+terraform init
+terraform workspace new development
+terraform workspace list
+terraform workspace select development
+terraform workspace show
+terraform plan
+terraform apply
+terraform workspace delete development
+```
+
 ## Courtesy of Jakir
 
 [![LinkedIn][linkedin-shield-jakir]][linkedin-url-jakir]
