@@ -790,7 +790,9 @@ In Terraform, modules are a way to organize and reuse your Terraform configurati
 - `Child Modules:` Modules that are called or referenced from other modules. They can be defined in separate directories or included from external sources.
 - `Module Source:` The location from where a module is retrieved. It can be a local path, a Git repository, a Terraform Registry, or other sources.
 
-**Basic Structure** As an example create a directory for the module `my-network-module`.
+**Basic Structure** 
+
+As an example create a directory for the module `my-network-module`.
 - `my-network-module/`
   - `main.tf`
   - `variables.tf`
