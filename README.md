@@ -994,7 +994,14 @@ Provisioners in Terraform are used to execute scripts or commands on a local or 
   ```
 
   #### [Workspaces](https://developer.hashicorp.com/terraform/cloud-docs/workspaces)
-  In Terraform, a workspace is an isolated environment that allows you to manage multiple states for a given configuration. Workspaces are useful when you need to manage multiple environments (e.g., development, staging, production) from the same configuration.
+  In Terraform, workspaces are a way to manage multiple instances of a single Terraform configuration. Each workspace maintains its own state file, which allows you to manage different environments (e.g., development, staging, production) without having to create separate configurations for each.
+
+  **Key Concepts**
+- **Default Workspace:** Every Terraform configuration starts with a single workspace named `default`. All commands that manage state, plan, and apply changes are done in this default workspace unless otherwise specified.
+- **Isolated State:** Each workspace has its own state file, which is used to store information about the infrastructure managed by Terraform.
+- **Environment Management:** Workspaces allow you to manage different environments (like dev, staging, and prod) using the same configuration.
+- **Easy Switching:** You can switch between workspaces using simple Terraform commands.
+- **Custom Workspaces:** You can create additional workspaces to manage different states.
 
   **Prerequisites**
 
@@ -1002,10 +1009,6 @@ Provisioners in Terraform are used to execute scripts or commands on a local or 
 - Terraform v1.1+ installed locally and configured with your HCP Terraform token
 - An AWS account
 - A GitHub account
-
-Key Concepts
-- **Default Workspace:** Every Terraform configuration starts with a single workspace named `default`. All commands that manage state, plan, and apply changes are done in this default workspace unless otherwise specified.
-- **Custom Workspaces:** You can create additional workspaces to manage different states.
 
 ```bash
 terraform init
@@ -1017,6 +1020,94 @@ terraform plan
 terraform apply
 terraform workspace delete development
 ```
+
+#### Secrets Management
+In Terraform, secrets management is a crucial aspect, especially when dealing with sensitive information like API keys, passwords, or other confidential data. Here are some common approaches to managing secrets in Terraform:
+
+1. **Environment Variables:**
+You can store secrets in environment variables and reference them in your Terraform configuration. For example:
+```json
+variable "db_password" {
+  description = "The password for the database"
+  type        = string
+  sensitive   = true
+}
+provider "aws" {
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
+}
+resource "aws_db_instance" "default" {
+  ...
+  password = var.db_password
+  ...
+}
+```
+Then, you can set the environment variables before running Terraform:
+```bash
+export TF_VAR_db_password="your_db_password"
+```
+
+2. **Terraform Variable Files**
+You can use a separate variable file (`*.tfvars`) to store sensitive data and include this file in your `.gitignore` to prevent it from being checked into version control:
+```bash
+db_password = "your_db_password"
+```
+Then, apply the configuration with:
+```bash
+terraform apply -var-file="secrets.tfvars"
+```
+
+3. **Terraform Cloud/Enterprise**
+Terraform Cloud and Enterprise offer secure ways to manage sensitive data. You can use the workspace variables to securely store and manage secrets.
+
+4. **HashiCorp Vault**
+HashiCorp Vault is a tool specifically designed for secrets management. You can integrate Terraform with Vault to dynamically retrieve secrets:
+```json
+provider "vault" {
+  address = "https://vault.example.com"
+}
+data "vault_generic_secret" "example" {
+  path = "secret/data/myapp/config"
+}
+resource "aws_db_instance" "default" {
+  ...
+  password = data.vault_generic_secret.example.data["password"]
+  ...
+}
+```
+
+5. **AWS Secrets Manager or Azure Key Vault**
+You can use cloud-specific secret management services like AWS Secrets Manager or Azure Key Vault to store and retrieve secrets in your Terraform configurations.
+AWS Key Vault
+```bash
+data "aws_secretsmanager_secret" "example" {
+  name = "my_secret"
+}
+data "aws_secretsmanager_secret_version" "example" {
+  secret_id = data.aws_secretsmanager_secret.example.id
+}
+resource "aws_db_instance" "default" {
+  ...
+  password = jsondecode(data.aws_secretsmanager_secret_version.example.secret_string)["password"]
+  ...
+}
+```
+Azure Key Vault
+```bash
+provider "azurerm" {
+  features {}
+}
+data "azurerm_key_vault_secret" "example" {
+  name         = "my-secret"
+  key_vault_id = azurerm_key_vault.example.id
+}
+resource "azurerm_sql_server" "example" {
+  ...
+  administrator_login_password = data.azurerm_key_vault_secret.example.value
+  ...
+}
+```
+
 
 ## Courtesy of Jakir
 
