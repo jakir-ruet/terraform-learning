@@ -1079,7 +1079,7 @@ resource "aws_db_instance" "default" {
 5. **AWS Secrets Manager or Azure Key Vault**
 You can use cloud-specific secret management services like AWS Secrets Manager or Azure Key Vault to store and retrieve secrets in your Terraform configurations.
 AWS Key Vault
-```bash
+```json
 data "aws_secretsmanager_secret" "example" {
   name = "my_secret"
 }
@@ -1093,7 +1093,7 @@ resource "aws_db_instance" "default" {
 }
 ```
 Azure Key Vault
-```bash
+```json
 provider "azurerm" {
   features {}
 }
@@ -1108,6 +1108,112 @@ resource "azurerm_sql_server" "example" {
 }
 ```
 
+#### [Vault](https://developer.hashicorp.com/terraform/tutorials/secrets/secrets-vault)
+Integrating HashiCorp Vault with Terraform is a powerful way to manage secrets securely. Below are the steps to integrate Vault with Terraform and examples of how to use Vault to dynamically retrieve secrets for your infrastructure.
+
+**Prerequisites**
+1. **HashiCorp Vault:** Make sure you have a running instance of Vault.
+2. **Vault Authentication:** Ensure you have authenticated access to Vault.
+3. **Vault Provider:** Use the Vault provider in your Terraform configuration.
+
+**Steps to Integrate Vault with Terraform**
+1. **Configure Vault Provider**
+First, you need to configure the Vault provider in your Terraform configuration.
+```json
+provider "vault" {
+  address = "https://vault.example.com"
+  token   = "s.xxxxxxx"  # Ideally, store this in an environment variable
+}
+```
+2. **Retrieve Secrets from Vault**
+You can use the `vault_generic_secret` data source to retrieve secrets from Vault.
+```json
+data "vault_generic_secret" "example" {
+  path = "secret/data/myapp/config"
+}
+```
+3. **Use Retrieved Secrets in Resources**
+You can reference the retrieved secrets in your resources. For example, using a secret for an AWS RDS instance password:
+```json
+resource "aws_db_instance" "example" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "foo"
+  password             = data.vault_generic_secret.example.data["password"]
+  parameter_group_name = "default.mysql5.6"
+}
+```
+
+**Complete Configuration**
+Below is a complete example showing in `main.tf` the integration of Terraform with Vault to manage an AWS RDS instance password.
+```json
+provider "aws" {
+  region = "us-west-2"
+}
+provider "vault" {
+  address = "https://vault.example.com"
+  token   = var.vault_token
+}
+variable "vault_token" {
+  description = "Token to authenticate with Vault"
+  type        = string
+  sensitive   = true
+}
+data "vault_generic_secret" "db_password" {
+  path = "secret/data/aws/rds"
+}
+resource "aws_db_instance" "example" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "foo"
+  password             = data.vault_generic_secret.db_password.data["password"]
+  parameter_group_name = "default.mysql5.6"
+}
+```
+**Setting Environment Variables**
+Before running `terraform apply`, you can set the Vault token as an environment variable to keep it secure.
+```bash
+export TF_VAR_vault_token="s.xxxxxxx"
+```
+**Advanced: Dynamic Secrets with Vault**
+Vault can generate dynamic secrets, such as database credentials, on the fly. Here's an example of how to use dynamic secrets in Terraform. Enable Database Secrets Engine in Vault. First, enable the database secrets engine and configure it in Vault:
+```bash
+vault secrets enable database
+vault write database/config/my-database \
+    plugin_name=mysql-database-plugin \
+    connection_url="{{username}}:{{password}}@tcp(127.0.0.1:3306)/" \
+    allowed_roles="my-role" \
+    username="admin" \
+    password="admin"
+vault write database/roles/my-role \
+    db_name=my-database \
+    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}'; GRANT SELECT ON *.* TO '{{name}}'@'%';" \
+    default_ttl="1h" \
+    max_ttl="24h"
+```
+**Use Dynamic Secrets in Terraform**
+```json
+provider "vault" {
+  address = "https://vault.example.com"
+  token   = var.vault_token
+}
+data "vault_database_credentials" "db_creds" {
+  name = "my-role"
+}
+resource "aws_db_instance" "example" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = data.vault_database_credentials.db_creds.username
+  password             = data.vault_database_credentials.db_creds.password
+  parameter_group_name = "default.mysql5.6"
+}
+```
 
 ## Courtesy of Jakir
 
