@@ -1108,7 +1108,7 @@ resource "azurerm_sql_server" "example" {
 }
 ```
 
-#### [Vault](https://developer.hashicorp.com/terraform/tutorials/secrets/secrets-vault)
+#### [Vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
 Integrating HashiCorp Vault with Terraform is a powerful way to manage secrets securely. Below are the steps to integrate Vault with Terraform and examples of how to use Vault to dynamically retrieve secrets for your infrastructure.
 
 **Prerequisites**
