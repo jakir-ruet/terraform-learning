@@ -938,7 +938,6 @@ To address and overcome the disadvantages of using a state file in Terraform, pa
 1. Making Amazon S3 and using Remote Backend for storing `State File` due it will update automatically. There is no chance of conflict. 
 2. State Locking: When using S3 as a backend, pair it with a state locking mechanism like DynamoDB. This prevents concurrent modifications and ensures that only one process can modify the state file at a time.
 ```json
-Copy code
 terraform {
   backend "s3" {
     bucket         = "my-terraform-state"
