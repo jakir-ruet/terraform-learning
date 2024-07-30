@@ -88,7 +88,7 @@ Resources have arguments, attributes, and meta-arguments.
   }
   ```
 
-**Blocks in Terraform**
+**Top Level Blocks in Terraform**
 - Fundamental Blocks
   - Settings (Terraform) Block
     ```json
@@ -115,6 +115,13 @@ Resources have arguments, attributes, and meta-arguments.
       instance_type = "t2.micro"
     }
     ```
+**Difference & Comparison of Fundamentals Blocks**
+| Settings (Terraform) Block     | Provider Block                  | Resource Block                |
+| :----------------------------- | :------------------------------ | :---------------------------- |
+| Special & use in configuration | Heat of Terraform               | Assign Infrastructure Objects |
+| Version Required               | Interact with Remote Systems    | Resource Syntax Declare       |
+| Provider List Required         | To install providers & Use them | Resource Behavior Declare     |
+| Terraform Backend              | Configure belong to Root Module | Create Provisioners           |
 - Variable Blocks
   - Input Variable Block
     ```json
