@@ -36,6 +36,16 @@ Some of the key features of Terraform that make it a versatile and powerful tool
 - Extendible
 - Agent less
 
+**[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
+There are a handful of basic terraform commands, including:
+|  SL   | Command              | Explanation                            |
+| :---: | :------------------- | :------------------------------------- |
+|   1   | `terraform init`     | Initialize Terraform Working Directory |
+|   2   | `terraform validate` | Validating a Configuration             |
+|   3   | `terraform plan`     | Generating a Terraform Plan            |
+|   4   | `terraform apply`    | Applying a Terraform Plan              |
+|   5   | `terraform destroy`  | TerraformDestroy                       |
+
 #### [Installation of Terraform](https://developer.hashicorp.com/terraform/install)
 Install in CodeSpace
 ```bash
@@ -43,6 +53,7 @@ wget https://releases.hashicorp.com/terraform/1.4.5/terraform_1.4.5_linux_amd64.
 unzip terraform_1.4.5_linux_amd64.zip
 sudo mv terraform /usr/local/bin/
 terraform --version
+terraform -help
 ```
 If any problem related to path variable
 ```bash
@@ -62,6 +73,33 @@ Configuration `Identity and Access Management (IAM)` on AWS Console.
 - Default output format [None]: json
 - Check the users `aws iam list-users`
 - Check the s3 resources `aws s3 ls`
+
+**Blocks in Terraform**
+- Settings Block
+  ```json
+  terraform {
+    required_providers {
+      aws = {
+        source  = "hashicorp/aws"
+        #version = "~> 3.21" # Optional but recommended in production
+      }
+    }
+  }
+  ```
+- Provider Block
+  ```json
+  provider "aws" {
+    profile = "default" # AWS Credentials Profile configured on your local desktop terminal   $HOME/.aws/credentials
+    region  = "us-east-1"
+  }
+  ```
+- Resource Block
+  ```json
+  resource "aws_instance" "ec2demo" {
+    ami = "ami-04d29b6f966df1537" # Amazon Linux in us-east-2, update as per your region
+    instance_type = "t2.micro"
+  }
+  ```
 
 #### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
 Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
