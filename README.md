@@ -46,7 +46,7 @@ resource "aws_vpc" "main" {
   <IDENTIFIER> = <EXPRESSION> # Argument
 }
 ```
-**Some Important Terms**
+**[Define Infrastructure](https://developer.hashicorp.com/terraform/tutorials/configuration-language/resource)**
 
 Resources have arguments, attributes, and meta-arguments.
 - **Arguments** assign a value to a name. They appear within blocks. Its configure a particular resource; because of this, many arguments are resource-specific. Arguments can be required or optional, as specified by the provider. If you do not supply a required argument, Terraform will give an error and not apply the configuration.
@@ -89,31 +89,106 @@ Resources have arguments, attributes, and meta-arguments.
   ```
 
 **Blocks in Terraform**
-- Settings Block
-  ```json
-  terraform {
-    required_providers {
-      aws = {
-        source  = "hashicorp/aws"
-        #version = "~> 3.21" # Optional but recommended in production
+- Fundamental Blocks
+  - Settings (Terraform) Block
+    ```json
+    terraform {
+      required_providers {
+        aws = {
+          source  = "hashicorp/aws"
+          #version = "~> 3.21" # Optional but recommended in production
+        }
       }
     }
-  }
-  ```
-- Provider Block
-  ```json
-  provider "aws" {
-    profile = "default" # AWS Credentials Profile configured on your local desktop terminal   $HOME/.aws/credentials
-    region  = "us-east-1"
-  }
-  ```
-- Resource Block
-  ```json
-  resource "aws_instance" "ec2demo" {
-    ami = "ami-04d29b6f966df1537" # Amazon Linux in us-east-2, update as per your region
-    instance_type = "t2.micro"
-  }
-  ```
+    ```
+  - Provider Block
+    ```json
+    provider "aws" {
+      profile = "default" # AWS Credentials Profile configured on your local desktop terminal   $HOME/.aws/credentials
+      region  = "us-east-1"
+    }
+    ```
+  - Resource Block
+    ```json
+    resource "aws_instance" "ec2demo" {
+      ami = "ami-04d29b6f966df1537" # Amazon Linux in us-east-2, update as per your region
+      instance_type = "t2.micro"
+    }
+    ```
+- Variable Blocks
+  - Input Variable Block
+    ```json
+    variable "instance_type" {
+      default = "t2.micro"
+      description = "EC2 Instance Type"
+      type = string
+    }
+    ```
+  - Output Values Block
+    ```json
+    output "ec2_instance_publicip" {
+      description = "EC2 Instance Public IP"
+      value = aws_instance.my-ec2-vm.public_ip
+    }
+    ```
+  - Local Values Block
+    ```json
+    locals {
+      bucket-name-prefix = "${var.app_name}-${var.environment_name}"
+    }
+    ```
+- Calling/Referencing Blocks
+  - Data Sources Block
+    ```json
+    data "aws_ami" "amzlinux" {
+      most_recent      = true
+      owners           = ["amazon"]
+
+      filter {
+        name   = "name"
+        values = ["amzn2-ami-hvm-*"]
+      }
+
+      filter {
+        name   = "root-device-type"
+        values = ["ebs"]
+      }
+
+      filter {
+        name   = "virtualization-type"
+        values = ["hvm"]
+      }
+
+      filter {
+        name   = "architecture"
+        values = ["x86_64"]
+      }
+
+    }
+    ```
+  - Modules Block
+    ```json
+    module "ec2_cluster" {
+      source                 = "terraform-aws-modules/ec2-instance/aws"
+      version                = "~> 2.0"
+
+      name                   = "my-modules-demo"
+      instance_count         = 2
+
+      ami                    = data.aws_ami.amzlinux.id
+      instance_type          = "t2.micro"
+      key_name               = "terraform-key"
+      monitoring             = true
+      vpc_security_group_ids = ["sg-08b25c5a5bf489ffa"]  # Get Default VPC Security Group ID and replace
+      subnet_id              = "subnet-4ee95470" # Get one public subnet id from default vpc and replace
+      user_data               = file("apache-install.sh")
+
+      tags = {
+        Terraform   = "true"
+        Environment = "dev"
+      }
+    }
+    ```
 
 **[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
 
