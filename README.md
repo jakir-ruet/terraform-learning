@@ -36,7 +36,87 @@ Some of the key features of Terraform that make it a versatile and powerful tool
 - Extendible
 - Agent less
 
+**[About the Terraform Language](https://developer.hashicorp.com/terraform/language)**
+```json
+resource "aws_vpc" "main" {
+  cidr_block = var.base_cidr_block
+}
+<BLOCK TYPE> "<BLOCK LABEL>" "<BLOCK LABEL>" {
+  # Block body
+  <IDENTIFIER> = <EXPRESSION> # Argument
+}
+```
+**Some Important Terms**
+
+Resources have arguments, attributes, and meta-arguments.
+- **Arguments** assign a value to a name. They appear within blocks. Its configure a particular resource; because of this, many arguments are resource-specific. Arguments can be required or optional, as specified by the provider. If you do not supply a required argument, Terraform will give an error and not apply the configuration.
+  ```json
+  resource "aws_instance" "example" {
+    ami           = "ami-123456"    # Required argument
+    instance_type = "t2.micro"      # Required argument
+    key_name      = "my-key"        # Optional argument
+    tags = {                        # Optional argument
+      Name = "example-instance"
+    }
+  }
+  ```
+- **Attributes** are values exposed by an existing resource. References to resource attributes take the format `resource_type.resource_name.attribute_name`. Unlike arguments which specify an infrastructure object's configuration, a resource's attributes are often assigned to it by the underlying cloud provider or API.
+  ```json
+  resource "aws_instance" "example" {
+    ami           = "ami-0c55b159cbfafe1f0"  # Attribute: AMI ID
+    instance_type = "t2.micro"               # Attribute: Instance type
+    tags = {
+      Name = "ExampleInstance"              # Attribute: Tags
+    }
+  }
+  ```
+  In this example, `aws_instance` has several attributes such as `ami`, `instance_type` & `tags`
+- **Meta-arguments** in Terraform are special arguments that can be used with resource blocks and modules to control their behavior or influence the infrastructure provisioning process. They provide additional configuration options beyond the regular resource-specific arguments such as `depends_on`, `count`, `for_each`, `provider` & `lifecycle` etc.
+  ```json
+  resource "aws_instance" "example" {
+    count = 3                         # Meta-argument: Count
+    ami           = "ami-0c55b159cbfafe1f0"
+    instance_type = "t2.micro"
+    
+    lifecycle {
+      create_before_destroy = true    # Meta-argument: Lifecycle
+    }
+
+    tags = {
+      Name = "ExampleInstance ${count.index}"  # Unique tags for each instance
+    }
+  }
+  ```
+
+**Blocks in Terraform**
+- Settings Block
+  ```json
+  terraform {
+    required_providers {
+      aws = {
+        source  = "hashicorp/aws"
+        #version = "~> 3.21" # Optional but recommended in production
+      }
+    }
+  }
+  ```
+- Provider Block
+  ```json
+  provider "aws" {
+    profile = "default" # AWS Credentials Profile configured on your local desktop terminal   $HOME/.aws/credentials
+    region  = "us-east-1"
+  }
+  ```
+- Resource Block
+  ```json
+  resource "aws_instance" "ec2demo" {
+    ami = "ami-04d29b6f966df1537" # Amazon Linux in us-east-2, update as per your region
+    instance_type = "t2.micro"
+  }
+  ```
+
 **[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
+
 There are a handful of basic terraform commands, including:
 |  SL   | Command              | Explanation                            |
 | :---: | :------------------- | :------------------------------------- |
@@ -73,33 +153,6 @@ Configuration `Identity and Access Management (IAM)` on AWS Console.
 - Default output format [None]: json
 - Check the users `aws iam list-users`
 - Check the s3 resources `aws s3 ls`
-
-**Blocks in Terraform**
-- Settings Block
-  ```json
-  terraform {
-    required_providers {
-      aws = {
-        source  = "hashicorp/aws"
-        #version = "~> 3.21" # Optional but recommended in production
-      }
-    }
-  }
-  ```
-- Provider Block
-  ```json
-  provider "aws" {
-    profile = "default" # AWS Credentials Profile configured on your local desktop terminal   $HOME/.aws/credentials
-    region  = "us-east-1"
-  }
-  ```
-- Resource Block
-  ```json
-  resource "aws_instance" "ec2demo" {
-    ami = "ami-04d29b6f966df1537" # Amazon Linux in us-east-2, update as per your region
-    instance_type = "t2.micro"
-  }
-  ```
 
 #### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
 Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
