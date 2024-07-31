@@ -1,0 +1,2 @@
+#### Datasources
+In Terraform, data sources allow you to fetch information from various providers and external sources, which can be used within your Terraform configurations. They are useful for referencing information that you don't want to hard-code, such as the ID of an existing resource, the latest version of an AMI, or details from another infrastructure component.

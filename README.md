@@ -36,6 +36,192 @@ Some of the key features of Terraform that make it a versatile and powerful tool
   - Extendible
   - Agent less
 
+#### [Installation of Terraform](https://developer.hashicorp.com/terraform/install)
+Install in CodeSpace
+```bash
+wget https://releases.hashicorp.com/terraform/1.4.5/terraform_1.4.5_linux_amd64.zip
+unzip terraform_1.4.5_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+terraform --version
+terraform -help
+```
+If any problem related to path variable
+```bash
+export PATH=$PATH:/usr/local/bin
+source ~/.bashrc
+```
+
+#### [Installation of AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+```bash
+aws --version
+aws configure
+```
+Configuration `Identity and Access Management (IAM)` on AWS Console.
+- AWS Access Key ID [None]: Put your ID here and press Enter.
+- AWS Secret Access Key [None]: Put your secret key here and press Enter
+- Default region name [None]: us-east-1
+- Default output format [None]: json
+- Check the users `aws iam list-users`
+- Check the s3 resources `aws s3 ls`
+
+#### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
+Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
+- AWS (Amazon Web Services)
+- Azure (Microsoft Azure)
+- Google Cloud Platform (GCP)
+- Kubernetes
+
+Many others are available and can be found in the [Terraform Registry](https://registry.terraform.io/browse/providers).
+```json
+provider "aws" {
+  region = "us-west-2"
+}
+```
+
+#### Variables
+In Terraform, variables are used to make configurations more flexible and reusable. By defining variables, you can parameterize your infrastructure, allowing you to input different values without changing the code itself. This is especially useful for managing different environments (like development, staging, and production) with the same configuration code. Types of  variables
+- **Input Variables** Its used to parameterize your Terraform configurations. They allow you to pass values into your modules/configurations from outside. Its define within a module or at the root level of your configuration.
+  ```json
+  variable "ami" {
+    type        = string
+    description = "Ubuntu ami_id"
+  }
+  variable "instance_type" {
+    type        = string
+    description = "Instance type"
+  }
+  variable "name_tag" {
+    type        = string
+    Description = "name of EC2 instance"
+  }
+  ```
+  Use of input variable
+  ```json
+  resource "aws_instance" "my-aws-instance" {
+    ami           = var.ami
+    instance_type = var.instance_type
+    
+    tags = {
+      Name = var.name_tag
+    }
+  }
+  ```
+- **Output Values** Its allow you to expose the values from your module/configuration, making them available fro use in other parts of your Terraform setup.
+  ```json
+  output "public_ip" {
+    value       = aws_instance.my_vm.public_ip 
+    description = "Public I P Address o f EC2 instance"
+  }
+  output "instance_id" {
+    value       = aws_instance.my_vm.id 
+    description = "Instance ID"
+  }
+  ```
+- **Local Values** are a way to define expressions or intermediate variables that can be reused throughout your configuration. They are similar to variables but are computed locally and are read-only. Local values help make your Terraform configuration more readable, reduce repetition, and make it easier to manage complex logic.
+  ```json
+  locals {
+    environment = "production"
+    region      = "us-west-2"
+    instance_type = "t2.micro"
+    tags = {
+      Environment = local.environment
+      Project     = "my-project"
+    }
+    instance_count = 3
+  }
+  resource "aws_instance" "example" {
+    count         = local.instance_count
+    ami           = "ami-12345678"
+    instance_type = local.instance_type
+    tags          = local.tags
+
+    # The region can be used in a provider block or resource
+    provider = aws.local.region
+  }
+  ```
+
+**Some Important Variables**
+Simple string variable
+```json
+variable "region" {
+  description = "The AWS region to deploy resources in"
+  type        = string
+  default     = "us-west-2"
+}
+```
+Variable with validation
+```json
+variable "environment" {
+  description = "The environment to deploy resources in"
+  type        = string
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be one of dev, staging, or prod"
+  }
+}
+```
+List variable
+```json
+variable "availability_zones" {
+  description = "A list of availability zones to deploy resources in"
+  type        = list(string)
+  default     = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+```
+Map variable
+```json
+variable "tags" {
+  description = "A map of tags to apply to resources"
+  type        = map(string)
+  default     = {
+    "environment" = "dev"
+    "owner"       = "admin"
+  }
+}
+```
+Use Variables
+```json
+provider "aws" {
+  region = var.region
+}
+resource "aws_instance" "example" {
+  ami               = "ami-123456"
+  instance_type     = "t2.micro"
+  availability_zone = var.availability_zones[0]
+  tags              = var.tags
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 **[About the Terraform Language](https://developer.hashicorp.com/terraform/language)**
 ```json
 resource "aws_vpc" "main" {
@@ -46,6 +232,19 @@ resource "aws_vpc" "main" {
   <IDENTIFIER> = <EXPRESSION> # Argument
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 **[Define Infrastructure](https://developer.hashicorp.com/terraform/tutorials/configuration-language/resource)**
 
 Resources have arguments, attributes, and meta-arguments.
@@ -212,47 +411,7 @@ There are a handful of basic terraform commands, including:
 |   4   | `terraform apply`    | Applying a Terraform Plan              |
 |   5   | `terraform destroy`  | TerraformDestroy                       |
 
-#### [Installation of Terraform](https://developer.hashicorp.com/terraform/install)
-Install in CodeSpace
-```bash
-wget https://releases.hashicorp.com/terraform/1.4.5/terraform_1.4.5_linux_amd64.zip
-unzip terraform_1.4.5_linux_amd64.zip
-sudo mv terraform /usr/local/bin/
-terraform --version
-terraform -help
-```
-If any problem related to path variable
-```bash
-export PATH=$PATH:/usr/local/bin
-source ~/.bashrc
-```
 
-#### [Installation of AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-```bash
-aws --version
-aws configure
-```
-Configuration `Identity and Access Management (IAM)` on AWS Console.
-- AWS Access Key ID [None]: Put your ID here and press Enter.
-- AWS Secret Access Key [None]: Put your secret key here and press Enter
-- Default region name [None]: us-east-1
-- Default output format [None]: json
-- Check the users `aws iam list-users`
-- Check the s3 resources `aws s3 ls`
-
-#### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
-Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
-- AWS (Amazon Web Services)
-- Azure (Microsoft Azure)
-- Google Cloud Platform (GCP)
-- Kubernetes
-
-Many others are available and can be found in the [Terraform Registry](https://registry.terraform.io/browse/providers).
-```json
-provider "aws" {
-  region = "us-west-2"
-}
-```
 
 #### [Modules](https://developer.hashicorp.com/terraform/language/modules)
 In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
@@ -307,99 +466,6 @@ Terraform Command Line Interface (CLI) to manage infrastructure, and interact wi
 
 The Terraform CLI is a command-line tool used to manage infrastructure as code (IaC). It enables users to define, preview, and apply changes to infrastructure resources using configuration files written in HashiCorp Configuration Language (HCL) or JSON. Below is a detailed overview of the Terraform CLI commands and their usage:
 
-#### Terraform Variables
-Terraform variables allow you to customize and parameterize your Terraform configurations. They enable you to pass dynamic values into your Terraform scripts, making your infrastructure code more flexible and reusable.
-
-Simple string variable
-```json
-variable "region" {
-  description = "The AWS region to deploy resources in"
-  type        = string
-  default     = "us-west-2"
-}
-```
-Variable with validation
-```json
-variable "environment" {
-  description = "The environment to deploy resources in"
-  type        = string
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "Environment must be one of dev, staging, or prod"
-  }
-}
-```
-List variable
-```json
-variable "availability_zones" {
-  description = "A list of availability zones to deploy resources in"
-  type        = list(string)
-  default     = ["us-west-2a", "us-west-2b", "us-west-2c"]
-}
-```
-Map variable
-```json
-variable "tags" {
-  description = "A map of tags to apply to resources"
-  type        = map(string)
-  default     = {
-    "environment" = "dev"
-    "owner"       = "admin"
-  }
-}
-```
-Use Variables
-```json
-provider "aws" {
-  region = var.region
-}
-
-resource "aws_instance" "example" {
-  ami               = "ami-123456"
-  instance_type     = "t2.micro"
-  availability_zone = var.availability_zones[0]
-  tags              = var.tags
-}
-```
-**Types of Variable**
-- **Input Variable** Its used to parameterize your Terraform configurations. They allow you to pass values into your modules/configurations from outside. Its define within a module or at the root level of your configuration.
-```json
-variable "ami" {
-  type        = string
-  description = "Ubuntu ami_id"
-}
-variable "instance_type" {
-  type        = string
-  description = "Instance type"
-}
-variable "name_tag" {
-  type        = string
-  Description = "name of EC2 instance"
-}
-```
-Use of input variable
-```json
-resource "aws_instance" "my-aws-instance" {
-  ami           = var.ami
-  instance_type = var.instance_type
-  
-  tags = {
-    Name = var.name_tag
-  }
-}
-```
-
-- **Output Variable:** Its allow you to expose the values from your module/configuration, making them available fro use in other parts of your Terraform setup.
-```json
-output "public_ip" {
-  value       = aws_instance.my_vm.public_ip 
-  description = "Public I P Address o f EC2 instance"
-}
-output "instance_id" {
-  value       = aws_instance.my_vm.id 
-  description = "Instance ID"
-}
-```
 **Conditional Operators**
 
 Its allow you to perform simple if-else logic within your configuration. This is useful for setting values based on conditions, enabling more dynamic and flexible infrastructure definitions. The primary conditional operator in Terraform is the ternary operator, which follows this syntax:
