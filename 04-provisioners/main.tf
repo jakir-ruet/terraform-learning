@@ -73,7 +73,7 @@ resource "aws_security_group" "sg-wep-app" {
 }
 
 resource "aws_instance" "my_py_server" {
-  ami                    = "ami-0261755bbcb8c4a84"
+  ami                    = "ami-0862be96e41dcbf74"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.example.key_name
   vpc_security_group_ids = [aws_security_group.sg-wep-app.id]

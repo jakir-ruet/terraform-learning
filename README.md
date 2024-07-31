@@ -23,18 +23,18 @@ Terraform creates and manages resources on cloud platforms and other services th
 
 #### Benefits of using Terraform?
 Terraform revolutionized infrastructure management by introducing the concept of Infrastructure as Code (laC), which inherently takes advantage of these advancements to manage infrastructure more effectively. Lets' take a look at a few of the benefits Terraform has to offer.
-- Consistency: 
-- Automation: 
-- Less Risk:
-- Modular & DRY: 
+- Consistency 
+- Automation 
+- Less Risk
+- Modular & DRY
 
 #### Key Features
 Some of the key features of Terraform that make it a versatile and powerful tool for managing infrastructure include:
-- Declarative
-- Cloud Agnostic
-- Ecosystem
-- Extendible
-- Agent less
+  - Declarative
+  - Cloud Agnostic
+  - Ecosystem
+  - Extendible
+  - Agent less
 
 **[About the Terraform Language](https://developer.hashicorp.com/terraform/language)**
 ```json
@@ -115,13 +115,13 @@ Resources have arguments, attributes, and meta-arguments.
       instance_type = "t2.micro"
     }
     ```
-**Difference & Comparison of Fundamentals Blocks**
-| Settings (Terraform) Block     | Provider Block                  | Resource Block                |
-| :----------------------------- | :------------------------------ | :---------------------------- |
-| Special & use in configuration | Heat of Terraform               | Assign Infrastructure Objects |
-| Version Required               | Interact with Remote Systems    | Resource Syntax Declare       |
-| Provider List Required         | To install providers & Use them | Resource Behavior Declare     |
-| Terraform Backend              | Configure belong to Root Module | Create Provisioners           |
+    **Difference & Comparison of Fundamentals Blocks**
+    | Settings (Terraform) Block     | Provider Block                  | Resource Block                |
+    | :----------------------------- | :------------------------------ | :---------------------------- |
+    | Special & use in configuration | Heat of Terraform               | Assign Infrastructure Objects |
+    | Version Required               | Interact with Remote Systems    | Resource Syntax Declare       |
+    | Provider List Required         | To install providers & Use them | Resource Behavior Declare     |
+    | Terraform Backend              | Configure belong to Root Module | Create Provisioners           |
 - Variable Blocks
   - Input Variable Block
     ```json
@@ -196,6 +196,10 @@ Resources have arguments, attributes, and meta-arguments.
       }
     }
     ```
+**Important Notes** within a Terraform Block
+- Only constant values can be used.
+- Arguments may not refer to named objects such as resources, input variables etc.
+- May not use any of Terraform Language built-in functions.
 
 **[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
 
@@ -306,15 +310,16 @@ The Terraform CLI is a command-line tool used to manage infrastructure as code (
 #### Terraform Variables
 Terraform variables allow you to customize and parameterize your Terraform configurations. They enable you to pass dynamic values into your Terraform scripts, making your infrastructure code more flexible and reusable.
 
+Simple string variable
 ```json
-# Simple string variable
 variable "region" {
   description = "The AWS region to deploy resources in"
   type        = string
   default     = "us-west-2"
 }
-
-# Variable with validation
+```
+Variable with validation
+```json
 variable "environment" {
   description = "The environment to deploy resources in"
   type        = string
@@ -323,15 +328,17 @@ variable "environment" {
     error_message = "Environment must be one of dev, staging, or prod"
   }
 }
-
-# List variable
+```
+List variable
+```json
 variable "availability_zones" {
   description = "A list of availability zones to deploy resources in"
   type        = list(string)
   default     = ["us-west-2a", "us-west-2b", "us-west-2c"]
 }
-
-# Map variable
+```
+Map variable
+```json
 variable "tags" {
   description = "A map of tags to apply to resources"
   type        = map(string)
