@@ -1,0 +1,2 @@
+#### [Functions](https://developer.hashicorp.com/terraform/language/functions)
+Terraform has a variety of built-in functions that can be used to perform various operations within your configurations. These functions are divided into several categories based on their use cases.

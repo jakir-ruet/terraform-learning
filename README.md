@@ -145,6 +145,7 @@ In Terraform, variables are used to make configurations more flexible and reusab
   ```
 
 **Some Important Variables**
+
 Simple string variable
 ```json
 variable "region" {
@@ -437,7 +438,7 @@ resource "aws_instance" "example" {
 }
 ```
 
-#### [Built-in Functions](https://developer.hashicorp.com/terraform/language/functions)
+#### [Functions](https://developer.hashicorp.com/terraform/language/functions)
 Terraform has a variety of built-in functions that can be used to perform various operations within your configurations. These functions are divided into several categories based on their use cases:
 
 **String Functions**
