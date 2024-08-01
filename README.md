@@ -9,6 +9,11 @@ Terraform, an open source “Infrastructure as Code” tool created by HashiCorp
 
 Terraform is an infrastructure as code (IaC) tool that lets you build, change, and version `cloud` and `on-prem` resources safely and efficiently. Its can manage low-level components like `compute`, `storage`, and `networking resources`, as well as high-level components like DNS entries and SaaS features.
 
+#### [Command Line Interface (CLI)](https://developer.hashicorp.com/terraform/cli)
+Terraform Command Line Interface (CLI) to manage infrastructure, and interact with Terraform state, providers, configuration files, and Terraform Cloud.
+
+The Terraform CLI is a command-line tool used to manage infrastructure as code (IaC). It enables users to define, preview, and apply changes to infrastructure resources using configuration files written in HashiCorp Configuration Language (HCL) or JSON.
+
 #### How does Terraform work?
 Terraform creates and manages resources on cloud platforms and other services through their application programming interfaces (APIs). Providers (AWS, Azure, GCP) enable Terraform to work with virtually any platform or service with an accessible API. The core Terraform workflow consists of `three` stages:
 ![Terraform Work](/img/how-work.png)
@@ -134,7 +139,6 @@ In Terraform, variables are used to make configurations more flexible and reusab
     ami           = "ami-12345678"
     instance_type = local.instance_type
     tags          = local.tags
-
     # The region can be used in a provider block or resource
     provider = aws.local.region
   }
@@ -192,102 +196,74 @@ resource "aws_instance" "example" {
 }
 ```
 
+#### Datasources
+In Terraform, data sources allow you to fetch information from various providers and external sources, which can be used within your Terraform configurations. They are useful for referencing information that you don't want to hard-code, such as the ID of an existing resource, the latest version of an AMI, or details from another infrastructure component. For example we get latest ami for Ubuntu Linux.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-**[About the Terraform Language](https://developer.hashicorp.com/terraform/language)**
+To provide a data source for Ubuntu Linux using a declarative approach in infrastructure-as-code tools, we typically define the source and parameters that specify which Ubuntu AMI to use. Here's how to do it in Terraform and AWS CloudFormation.
 ```json
-resource "aws_vpc" "main" {
-  cidr_block = var.base_cidr_block
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # collect it from AMI menu
+
+   filter {
+      name   = "name"
+      values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-20240701.1"]
+   }
+
+   filter {
+   name = "root_device_type"
+   values = ["ebs"]
+   }
+
+   filter {
+     name = "architecture"
+     values = ["x86_64"]
+   }
+
+   filter {
+      name   = "virtualization-type"
+      values = ["hvm"]
+   }
 }
-<BLOCK TYPE> "<BLOCK LABEL>" "<BLOCK LABEL>" {
-  # Block body
-  <IDENTIFIER> = <EXPRESSION> # Argument
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = "kp-my-datasource" # Replace with your key pair name
+
+  tags = {
+    Name = "tg-datasource"
+  }
 }
 ```
 
+**[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
 
+There are a handful of basic terraform commands, including:
+|  SL   | Command              | Explanation                            |
+| :---: | :------------------- | :------------------------------------- |
+|   1   | `terraform init`     | Initialize Terraform Working Directory |
+|   2   | `terraform validate` | Validating a Configuration             |
+|   3   | `terraform plan`     | Generating a Terraform Plan            |
+|   4   | `terraform apply`    | Applying a Terraform Plan              |
+|   5   | `terraform destroy`  | TerraformDestroy                       |
 
-
-
-
-
-
-
-
-
-
-
-**[Define Infrastructure](https://developer.hashicorp.com/terraform/tutorials/configuration-language/resource)**
-
-Resources have arguments, attributes, and meta-arguments.
-- **Arguments** assign a value to a name. They appear within blocks. Its configure a particular resource; because of this, many arguments are resource-specific. Arguments can be required or optional, as specified by the provider. If you do not supply a required argument, Terraform will give an error and not apply the configuration.
-  ```json
-  resource "aws_instance" "example" {
-    ami           = "ami-123456"    # Required argument
-    instance_type = "t2.micro"      # Required argument
-    key_name      = "my-key"        # Optional argument
-    tags = {                        # Optional argument
-      Name = "example-instance"
-    }
+#### [Resources](https://developer.hashicorp.com/terraform/language/resources)
+A resource is a component that manages the infrastructure object, such as a virtual machine, a database, or a network. Resources are defined in Terraform configuration files and represent the desired state of an infrastructure component. Terraform then uses these configurations to create, update, and manage the actual infrastructure resources in a cloud or on-premises environment.
+```json
+provider "aws" {
+  region = "us-west-2"
+}
+resource "aws_instance" "my-server" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "tg-my-server"
   }
-  ```
-- **Attributes** are values exposed by an existing resource. References to resource attributes take the format `resource_type.resource_name.attribute_name`. Unlike arguments which specify an infrastructure object's configuration, a resource's attributes are often assigned to it by the underlying cloud provider or API.
-  ```json
-  resource "aws_instance" "example" {
-    ami           = "ami-0c55b159cbfafe1f0"  # Attribute: AMI ID
-    instance_type = "t2.micro"               # Attribute: Instance type
-    tags = {
-      Name = "ExampleInstance"              # Attribute: Tags
-    }
-  }
-  ```
-  In this example, `aws_instance` has several attributes such as `ami`, `instance_type` & `tags`
-- **Meta-arguments** in Terraform are special arguments that can be used with resource blocks and modules to control their behavior or influence the infrastructure provisioning process. They provide additional configuration options beyond the regular resource-specific arguments such as `depends_on`, `count`, `for_each`, `provider` & `lifecycle` etc.
-  ```json
-  resource "aws_instance" "example" {
-    count = 3                         # Meta-argument: Count
-    ami           = "ami-0c55b159cbfafe1f0"
-    instance_type = "t2.micro"
-    
-    lifecycle {
-      create_before_destroy = true    # Meta-argument: Lifecycle
-    }
+}
+```
 
-    tags = {
-      Name = "ExampleInstance ${count.index}"  # Unique tags for each instance
-    }
-  }
-  ```
-
-**Top Level Blocks in Terraform**
+#### Top Level Blocks in Terraform
 - Fundamental Blocks
   - Settings (Terraform) Block
     ```json
@@ -400,74 +376,49 @@ Resources have arguments, attributes, and meta-arguments.
 - Arguments may not refer to named objects such as resources, input variables etc.
 - May not use any of Terraform Language built-in functions.
 
-**[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
+**[Define Infrastructure](https://developer.hashicorp.com/terraform/tutorials/configuration-language/resource)**
 
-There are a handful of basic terraform commands, including:
-|  SL   | Command              | Explanation                            |
-| :---: | :------------------- | :------------------------------------- |
-|   1   | `terraform init`     | Initialize Terraform Working Directory |
-|   2   | `terraform validate` | Validating a Configuration             |
-|   3   | `terraform plan`     | Generating a Terraform Plan            |
-|   4   | `terraform apply`    | Applying a Terraform Plan              |
-|   5   | `terraform destroy`  | TerraformDestroy                       |
-
-
-
-#### [Modules](https://developer.hashicorp.com/terraform/language/modules)
-In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
-
-**Key Concepts**
-- `Root Module:` The configuration in the main directory where you run terraform apply. It can include other modules but is not itself considered a module.
-- `Child Modules:` Modules that are called or referenced from other modules. They can be defined in separate directories or included from external sources.
-- `Module Source:` The location from where a module is retrieved. It can be a local path, a Git repository, a Terraform Registry, or other sources.
-
-**Basic Structure** 
-
-As an example create a directory for the module `my-network-module`.
-- `my-network-module/`
-  - `main.tf`
-  - `variables.tf`
-  - `outputs.tf`
-
-**Benefits of Modules**
-- Modularity
-- Reusability
-- Simplified Collaboration
-- Versioning & Maintenances
-- Abstraction
-- Testing & Validation
-- Scalability
-- Security & Compliance
-- Keep Modules DRY
-
-#### [Terraform Resources](https://developer.hashicorp.com/terraform/language/resources)
-A resource is a component that manages the infrastructure object, such as a virtual machine, a database, or a network. Resources are defined in Terraform configuration files and represent the desired state of an infrastructure component. Terraform then uses these configurations to create, update, and manage the actual infrastructure resources in a cloud or on-premises environment.
-```json
-provider "aws" {
-  region = "us-west-2"
-}
-resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0"
-  instance_type = "t2.micro"
-  tags = {
-    Name = "ExampleInstance"
+Resources have arguments, attributes, and meta-arguments.
+- **Arguments** assign a value to a name. They appear within blocks. Its configure a particular resource; because of this, many arguments are resource-specific. Arguments can be required or optional, as specified by the provider. If you do not supply a required argument, Terraform will give an error and not apply the configuration.
+  ```json
+  resource "aws_instance" "example" {
+    ami           = "ami-123456"    # Required argument
+    instance_type = "t2.micro"      # Required argument
+    key_name      = "my-key"        # Optional argument
+    tags = {                        # Optional argument
+      Name = "example-instance"
+    }
   }
-}
-```
-**Creating & Managing Resources**
-- `Initialize:` Run terraform init to initialize the configuration and download the necessary provider plugins.
-  `terraform init`
-- `Plan:` Run terraform plan to see the changes that Terraform will make to achieve the desired state defined in the configuration. `terraform plan`
-- `Apply:` Run terraform apply to apply the changes and create/update/delete resources. `terraform apply`
-- `Destroy:` Run terraform destroy to remove all resources defined in the configuration. `terraform destroy`
+  ```
+- **Attributes** are values exposed by an existing resource. References to resource attributes take the format `resource_type.resource_name.attribute_name`. Unlike arguments which specify an infrastructure object's configuration, a resource's attributes are often assigned to it by the underlying cloud provider or API.
+  ```json
+  resource "aws_instance" "example" {
+    ami           = "ami-0c55b159cbfafe1f0"  # Attribute: AMI ID
+    instance_type = "t2.micro"               # Attribute: Instance type
+    tags = {
+      Name = "ExampleInstance"              # Attribute: Tags
+    }
+  }
+  ```
+  In this example, `aws_instance` has several attributes such as `ami`, `instance_type` & `tags`
+- **Meta-arguments** in Terraform are special arguments that can be used with resource blocks and modules to control their behavior or influence the infrastructure provisioning process. They provide additional configuration options beyond the regular resource-specific arguments such as `depends_on`, `count`, `for_each`, `provider` & `lifecycle` etc.
+  ```json
+  resource "aws_instance" "example" {
+    count = 3                         # Meta-argument: Count
+    ami           = "ami-0c55b159cbfafe1f0"
+    instance_type = "t2.micro"
+    
+    lifecycle {
+      create_before_destroy = true    # Meta-argument: Lifecycle
+    }
 
-#### [Command Line Interface (CLI)](https://developer.hashicorp.com/terraform/cli)
-Terraform Command Line Interface (CLI) to manage infrastructure, and interact with Terraform state, providers, configuration files, and Terraform Cloud.
+    tags = {
+      Name = "ExampleInstance ${count.index}"  # Unique tags for each instance
+    }
+  }
+  ```
 
-The Terraform CLI is a command-line tool used to manage infrastructure as code (IaC). It enables users to define, preview, and apply changes to infrastructure resources using configuration files written in HashiCorp Configuration Language (HCL) or JSON. Below is a detailed overview of the Terraform CLI commands and their usage:
-
-**Conditional Operators**
-
+#### Conditional Operators
 Its allow you to perform simple if-else logic within your configuration. This is useful for setting values based on conditions, enabling more dynamic and flexible infrastructure definitions. The primary conditional operator in Terraform is the ternary operator, which follows this syntax:
 ```bash
 condition ? true_value : false_value
@@ -1195,6 +1146,34 @@ terraform {
 }
 ```
 
+#### [Workspaces](https://developer.hashicorp.com/terraform/cloud-docs/workspaces)
+  In Terraform, workspaces are a way to manage multiple instances of a single Terraform configuration. Each workspace maintains its own state file, which allows you to manage different environments (e.g., development, staging, production) without having to create separate configurations for each.
+
+  **Key Concepts**
+- **Default Workspace:** Every Terraform configuration starts with a single workspace named `default`. All commands that manage state, plan, and apply changes are done in this default workspace unless otherwise specified.
+- **Isolated State:** Each workspace has its own state file, which is used to store information about the infrastructure managed by Terraform.
+- **Environment Management:** Workspaces allow you to manage different environments (like dev, staging, and prod) using the same configuration.
+- **Easy Switching:** You can switch between workspaces using simple Terraform commands.
+- **Custom Workspaces:** You can create additional workspaces to manage different states.
+
+  **Prerequisites**
+
+- An HCP Terraform account and organization
+- Terraform v1.1+ installed locally and configured with your HCP Terraform token
+- An AWS account
+- A GitHub account
+
+```bash
+terraform init
+terraform workspace new development
+terraform workspace list
+terraform workspace select development
+terraform workspace show
+terraform plan
+terraform apply
+terraform workspace delete development
+```
+
 #### [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
 Provisioners in Terraform are used to execute scripts or commands on a local or remote machine as part of the resource creation or destruction process. They can be used to bootstrap resources, configure servers, or run any other kind of initialization.
 
@@ -1239,33 +1218,32 @@ Provisioners in Terraform are used to execute scripts or commands on a local or 
   }
   ```
 
-  #### [Workspaces](https://developer.hashicorp.com/terraform/cloud-docs/workspaces)
-  In Terraform, workspaces are a way to manage multiple instances of a single Terraform configuration. Each workspace maintains its own state file, which allows you to manage different environments (e.g., development, staging, production) without having to create separate configurations for each.
+#### [Modules](https://developer.hashicorp.com/terraform/language/modules)
+In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
 
-  **Key Concepts**
-- **Default Workspace:** Every Terraform configuration starts with a single workspace named `default`. All commands that manage state, plan, and apply changes are done in this default workspace unless otherwise specified.
-- **Isolated State:** Each workspace has its own state file, which is used to store information about the infrastructure managed by Terraform.
-- **Environment Management:** Workspaces allow you to manage different environments (like dev, staging, and prod) using the same configuration.
-- **Easy Switching:** You can switch between workspaces using simple Terraform commands.
-- **Custom Workspaces:** You can create additional workspaces to manage different states.
+**Key Concepts**
+- `Root Module:` The configuration in the main directory where you run terraform apply. It can include other modules but is not itself considered a module.
+- `Child Modules:` Modules that are called or referenced from other modules. They can be defined in separate directories or included from external sources.
+- `Module Source:` The location from where a module is retrieved. It can be a local path, a Git repository, a Terraform Registry, or other sources.
 
-  **Prerequisites**
+**Basic Structure** 
 
-- An HCP Terraform account and organization
-- Terraform v1.1+ installed locally and configured with your HCP Terraform token
-- An AWS account
-- A GitHub account
+As an example create a directory for the module `my-network-module`.
+- `my-network-module/`
+  - `main.tf`
+  - `variables.tf`
+  - `outputs.tf`
 
-```bash
-terraform init
-terraform workspace new development
-terraform workspace list
-terraform workspace select development
-terraform workspace show
-terraform plan
-terraform apply
-terraform workspace delete development
-```
+**Benefits of Modules**
+- Modularity
+- Reusability
+- Simplified Collaboration
+- Versioning & Maintenances
+- Abstraction
+- Testing & Validation
+- Scalability
+- Security & Compliance
+- Keep Modules DRY
 
 #### Secrets Management
 In Terraform, secrets management is a crucial aspect, especially when dealing with sensitive information like API keys, passwords, or other confidential data. Here are some common approaches to managing secrets in Terraform:
