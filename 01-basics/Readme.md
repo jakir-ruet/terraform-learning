@@ -24,7 +24,7 @@ Terraform is an infrastructure as code (IaC) tool that lets you build, change, a
   Configuration `Identity and Access Management (IAM)` on AWS Console.
   - AWS Access Key ID [None]: Put your ID here and press Enter.
   - AWS Secret Access Key [None]: Put your secret key here and press Enter
-  - Default region name [None]: us-east-1
+  - Default region name [None]: us-east-2
   - Default output format [None]: json
   - Check the users `aws iam list-users`
   - Check the s3 resources `aws s3 ls`
