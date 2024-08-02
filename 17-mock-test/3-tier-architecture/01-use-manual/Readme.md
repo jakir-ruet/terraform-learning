@@ -12,7 +12,7 @@
 - IPv4 CIDR Block: 10.0.0.0/16
 Press Create
 
-#### Public & Private Subnets
+#### Step-03: Public & Private Subnets
 
 ##### Public Subnets
 - VPC ID: vpc-test
@@ -26,18 +26,18 @@ Press Create
 - IPv4 CIDR Block: 10.0.101.0/24
 Press Create
 
-#### Create Internet Gateway (IGW) & associate to VPC
+#### Step-04: Create Internet Gateway (IGW) & associate to VPC
 -  IGW Name: igw-three-tier
 -  Go action menu > Attach to `vpc-test` press `Attach internet gateway`
 
-#### Create NAT Gateway
+#### Step-05: Create NAT Gateway
 - Name: nat-gateway
 - Subnet: subnet-private-1
 - Press `Allocate Elastic IP`
 - Select Public &
 Press to Create
 
-#### Create public Route Table (RT) & associate subnets
+#### Step-06: Create public Route Table (RT) & associate subnets
 
 ##### Create Route Table (RT)
 - Name: rt-public-1
@@ -55,7 +55,7 @@ Create to Press
 - Select `ps-subnet-public-1`
 Save to Press
 
-#### Create private Route Table (RT) & associate subnets
+#### Step-07 & Final: Create private Route Table (RT) & associate subnets
 
 ##### Create Route Table (RT)
 - Name: rt-private-1
@@ -72,4 +72,6 @@ Create to Press
 - Click `Edit Subnet Associations`
 - Select `ps-subnet-private-1`
 Save to Press
+
+##### 👍👍👍 Done 👍👍👍
 
