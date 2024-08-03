@@ -6,6 +6,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0" # AWS Provider Version
     }
+    # its use for 18-null-resource-provisioners.tf
+    null = {
+      source = "hashicorp/null"
+      version = "~> 5.0"
+    }
   }
 }
 
