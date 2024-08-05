@@ -32,11 +32,20 @@ Terraform is an infrastructure as code (IaC) tool that lets you build, change, a
 
 **[About the Terraform Language](https://developer.hashicorp.com/terraform/language)**
 ```json
-resource "aws_vpc" "main" {
-  cidr_block = var.base_cidr_block
-}
 <BLOCK TYPE> "<BLOCK LABEL>" "<BLOCK LABEL>" {
   # Block body
   <IDENTIFIER> = <EXPRESSION> # Argument
 }
 ```
+For Example
+```json
+resource "aws_vpc" "main" {
+  cidr_block = var.base_cidr_block
+}
+```
+Here we discuss
+- Syntax > See Main `README.md`
+- Variables > See Main `README.md`
+- Top Level Blocks > See Main `README.md`
+
+👍👍👍 Done 👍👍👍

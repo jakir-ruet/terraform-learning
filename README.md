@@ -69,19 +69,32 @@ Configuration `Identity and Access Management (IAM)` on AWS Console.
 - Check the users `aws iam list-users`
 - Check the s3 resources `aws s3 ls`
 
-#### [Terraform Providers](https://developer.hashicorp.com/terraform/language/providers)
-Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
-- AWS (Amazon Web Services)
-- Azure (Microsoft Azure)
-- Google Cloud Platform (GCP)
-- Kubernetes
+#### Basic Command/[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)
 
-Many others are available and can be found in the [Terraform Registry](https://registry.terraform.io/browse/providers).
-```json
-provider "aws" {
-  region = "us-west-2"
-}
+There are a handful of basic terraform commands, including:
+|  SL   | Command              | Explanation                            |
+| :---: | :------------------- | :------------------------------------- |
+|   1   | `terraform init`     | Initialize Terraform Working Directory |
+|   2   | `terraform validate` | Validating a Configuration             |
+|   3   | `terraform plan`     | Generating a Terraform Plan            |
+|   4   | `terraform apply`    | Applying a Terraform Plan              |
+|   5   | `terraform destroy`  | TerraformDestroy                       |
+
+**NB: Keep to clean the application**
+```bash
+rm -rf .terraform*
+rm -rf terraform.tfstate*
 ```
+
+### Basic Syntax
+Understand Terraform Configuration Language's Basics
+  - Understand Variables
+  - Understand Blocks
+  - Understand Arguments
+  - Understand Attributes
+  - Understand Meta-Arguments
+  - Understand Identifiers
+  - Understand Comments
 
 #### Variables
 In Terraform, variables are used to make configurations more flexible and reusable. By defining variables, you can parameterize your infrastructure, allowing you to input different values without changing the code itself. This is especially useful for managing different environments (like development, staging, and production) with the same configuration code. Types of  variables
@@ -197,74 +210,7 @@ resource "aws_instance" "example" {
 }
 ```
 
-#### Datasources
-In Terraform, data sources allow you to fetch information from various providers and external sources, which can be used within your Terraform configurations. They are useful for referencing information that you don't want to hard-code, such as the ID of an existing resource, the latest version of an AMI, or details from another infrastructure component. For example we get latest ami for Ubuntu Linux.
-
-To provide a data source for Ubuntu Linux using a declarative approach in infrastructure-as-code tools, we typically define the source and parameters that specify which Ubuntu AMI to use. Here's how to do it in Terraform and AWS CloudFormation.
-```json
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"] # collect it from AMI menu
-
-   filter {
-      name   = "name"
-      values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-20240701.1"]
-   }
-
-   filter {
-   name = "root_device_type"
-   values = ["ebs"]
-   }
-
-   filter {
-     name = "architecture"
-     values = ["x86_64"]
-   }
-
-   filter {
-      name   = "virtualization-type"
-      values = ["hvm"]
-   }
-}
-
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
-  key_name      = "kp-my-datasource" # Replace with your key pair name
-
-  tags = {
-    Name = "tg-datasource"
-  }
-}
-```
-
-**[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)**
-
-There are a handful of basic terraform commands, including:
-|  SL   | Command              | Explanation                            |
-| :---: | :------------------- | :------------------------------------- |
-|   1   | `terraform init`     | Initialize Terraform Working Directory |
-|   2   | `terraform validate` | Validating a Configuration             |
-|   3   | `terraform plan`     | Generating a Terraform Plan            |
-|   4   | `terraform apply`    | Applying a Terraform Plan              |
-|   5   | `terraform destroy`  | TerraformDestroy                       |
-
-#### [Resources](https://developer.hashicorp.com/terraform/language/resources)
-A resource is a component that manages the infrastructure object, such as a virtual machine, a database, or a network. Resources are defined in Terraform configuration files and represent the desired state of an infrastructure component. Terraform then uses these configurations to create, update, and manage the actual infrastructure resources in a cloud or on-premises environment.
-```json
-provider "aws" {
-  region = "us-west-2"
-}
-resource "aws_instance" "my-server" {
-  ami           = "ami-0c55b159cbfafe1f0"
-  instance_type = "t2.micro"
-  tags = {
-    Name = "tg-my-server"
-  }
-}
-```
-
-#### Top Level Blocks in Terraform
+#### Top Level Blocks
 - Fundamental Blocks
   - Settings (Terraform) Block
     ```json
@@ -419,22 +365,73 @@ Resources have arguments, attributes, and meta-arguments.
   }
   ```
 
-#### Conditional Operators
-Its allow you to perform simple if-else logic within your configuration. This is useful for setting values based on conditions, enabling more dynamic and flexible infrastructure definitions. The primary conditional operator in Terraform is the ternary operator, which follows this syntax:
-```bash
-condition ? true_value : false_value
-```
-Use of Conditional Operators
+### [Providers](https://developer.hashicorp.com/terraform/language/providers)
+Terraform providers are plugins that enable Terraform to manage different infrastructure services. They serve as a bridge between Terraform and various platforms or services, allowing Terraform to manage resources within those services. Providers are defined in the Terraform configuration files using the `provider` block. Popular Providers are
+- AWS (Amazon Web Services)
+- Azure (Microsoft Azure)
+- Google Cloud Platform (GCP)
+- Kubernetes
+
+Many others are available and can be found in the [Terraform Registry](https://registry.terraform.io/browse/providers).
 ```json
-variable "environment" {
-  description = "The environment to deploy resources in"
-  type        = string
-  default     = "dev"
+provider "aws" {
+  region = "us-west-2"
+}
+```
+
+### [Resources](https://developer.hashicorp.com/terraform/language/resources)
+A resource is a component that manages the infrastructure object, such as a virtual machine, a database, or a network. Resources are defined in Terraform configuration files and represent the desired state of an infrastructure component. Terraform then uses these configurations to create, update, and manage the actual infrastructure resources in a cloud or on-premises environment.
+```json
+provider "aws" {
+  region = "us-west-2"
+}
+resource "aws_instance" "my-server" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "tg-my-server"
+  }
+}
+```
+
+### Datasources
+In Terraform, data sources allow you to fetch information from various providers and external sources, which can be used within your Terraform configurations. They are useful for referencing information that you don't want to hard-code, such as the ID of an existing resource, the latest version of an AMI, or details from another infrastructure component. For example we get latest ami for Ubuntu Linux.
+
+To provide a data source for Ubuntu Linux using a declarative approach in infrastructure-as-code tools, we typically define the source and parameters that specify which Ubuntu AMI to use. Here's how to do it in Terraform and AWS CloudFormation.
+```json
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # collect it from AMI menu
+
+   filter {
+      name   = "name"
+      values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-20240701.1"]
+   }
+
+   filter {
+   name = "root_device_type"
+   values = ["ebs"]
+   }
+
+   filter {
+     name = "architecture"
+     values = ["x86_64"]
+   }
+
+   filter {
+      name   = "virtualization-type"
+      values = ["hvm"]
+   }
 }
 
-resource "aws_instance" "example" {
-  ami           = "ami-123456"
-  instance_type = var.environment == "prod" ? "t2.large" : "t2.micro"
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name      = "kp-my-datasource" # Replace with your key pair name
+
+  tags = {
+    Name = "tg-datasource"
+  }
 }
 ```
 
@@ -1036,7 +1033,7 @@ output "to_string" {
 # result: "42"
 ```
 
-#### [State Management](https://developer.hashicorp.com/terraform/language/state)
+### [State Management](https://developer.hashicorp.com/terraform/language/state)
 State management in Terraform is a crucial concept for tracking and managing the resources that Terraform `creates`, `updates`, and `deletes`. In Terraform, the `statefile` and `remote backend` are crucial components for managing and maintaining infrastructure as code. Here’s a detailed overview of state management in Terraform:
 
 **State**
@@ -1175,7 +1172,7 @@ terraform apply
 terraform workspace delete development
 ```
 
-#### [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
+### [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
 Provisioners in Terraform are used to execute scripts or commands on a local or remote machine as part of the resource creation or destruction process. They can be used to bootstrap resources, configure servers, or run any other kind of initialization.
 
 **Types of Provisioners**
@@ -1219,7 +1216,7 @@ Provisioners in Terraform are used to execute scripts or commands on a local or 
   }
   ```
 
-#### [Modules](https://developer.hashicorp.com/terraform/language/modules)
+### [Modules](https://developer.hashicorp.com/terraform/language/modules)
 In Terraform, modules are a way to organize and reuse your Terraform configurations. Modules allow you to encapsulate a set of resources and their configurations into a reusable and shareable unit. This makes your Terraform code more modular, maintainable, and scalable.
 
 **Key Concepts**
@@ -1246,7 +1243,7 @@ As an example create a directory for the module `my-network-module`.
 - Security & Compliance
 - Keep Modules DRY
 
-#### Secrets Management
+### Secrets Management
 In Terraform, secrets management is a crucial aspect, especially when dealing with sensitive information like API keys, passwords, or other confidential data. Here are some common approaches to managing secrets in Terraform:
 
 1. **Environment Variables:**
@@ -1333,7 +1330,7 @@ resource "azurerm_sql_server" "example" {
 }
 ```
 
-#### [Vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
+### [Vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
 Integrating HashiCorp Vault with Terraform is a powerful way to manage secrets securely. Below are the steps to integrate Vault with Terraform and examples of how to use Vault to dynamically retrieve secrets for your infrastructure.
 
 **Prerequisites**
