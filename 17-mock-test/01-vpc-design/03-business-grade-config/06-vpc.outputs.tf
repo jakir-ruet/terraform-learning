@@ -28,7 +28,7 @@ output "nat_public_ips" {
    value = module.vpc-test.nat_public_ips
 }
 
-# VPC Availabilty Zones
+# VPC Availability Zones
 output "azs" {
   description = "List of availability in specfic zone"
   value = module.vpc-test.azs

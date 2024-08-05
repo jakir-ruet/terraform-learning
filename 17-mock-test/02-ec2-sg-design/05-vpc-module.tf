@@ -16,7 +16,7 @@ module "vpc-test" {
   create_database_internet_gateway_route = false
   create_database_nat_gateway_route = false
 
-  # NAT gatewa for outbound communication
+  # NAT gateway for outbound communication
   enable_nat_gateway = var.vpc_enable_nat_gateway
   single_nat_gateway = var.vpc_single_nat_gateway
 
