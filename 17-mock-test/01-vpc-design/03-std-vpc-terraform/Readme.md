@@ -7,7 +7,7 @@
 - Work in `vpc-variables.tf`
 - Work in `vpc-module.tf`
 - Work in `vpc-outputs.tf`
-- Work in `vpc-auto.tfvars.tf`
+- Work in `vpc-auto.tfvars`
 
 #### Step-02
 - `terraform init`
