@@ -14,7 +14,7 @@ Press Create
    ##### Create Private Subnets
    - Subnet Name: subnet-private-1
    - Availability Zone: us-east-2a
-   - IPv4 CIDR Block: 10.0.101.0/24
+   - IPv4 CIDR Block: 10.0.2.0/24
    Press Create
 
 #### Step-03: Create Internet Gateway (IGW) & associate to VPC

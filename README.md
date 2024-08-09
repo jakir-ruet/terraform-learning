@@ -124,7 +124,7 @@ In Terraform, variables are used to make configurations more flexible and reusab
     }
   }
   ```
-- **Output Values** Its allow you to expose the values from your module/configuration, making them available fro use in other parts of your Terraform setup.
+- **Output Values** Its allow you to expose the values from your module/configuration, making them available for use in other parts of your Terraform setup.
   ```json
   output "public_ip" {
     value       = aws_instance.my_vm.public_ip 
