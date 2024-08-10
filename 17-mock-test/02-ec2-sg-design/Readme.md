@@ -12,4 +12,12 @@ openssl genpkey -algorithm RSA -out private-key.pem -aes256 -pkeyopt rsa_keygen_
 - Design a Virtual Private Cloud (VPC)
 - Design a Security Group (SG)
 - Design a Elastic Compute Cloud (EC2) 
+  - A EC2 Instance (Public) for Bastion > SSH Port 22 Enable
+  - A EC2 Instance (Private) > SSH Port 22 & 80 Enable 
+  - A EC2 Instance (Private) > SSH Port 22 & 80 Enable  
+- Configure Elastic IP (EIP)
+- Null Provisioner
+- Use Remote Exec Provisioner
+- Use Local Exec Provisioner
+- Use Depends_on Meta Argument
 
