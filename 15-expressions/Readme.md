@@ -1,6 +1,10 @@
-#### [Expression](https://developer.hashicorp.com/terraform/language/expressions)
-#### Conditional Operators
-Its allow you to perform simple if-else logic within your configuration. This is useful for setting values based on conditions, enabling more dynamic and flexible infrastructure definitions. The primary conditional operator in Terraform is the ternary operator, which follows this syntax:
+### [Expression](https://developer.hashicorp.com/terraform/language/expressions)
+
+#### [Function Calls](https://developer.hashicorp.com/terraform/language/expressions/function-calls)
+- `min(35, 56, 78)`
+- `max(35, 56, 78)`
+
+#### [Conditional](https://developer.hashicorp.com/terraform/language/expressions/conditionals)
 ```bash
 condition ? true_value : false_value
 ```
@@ -12,8 +16,13 @@ variable "environment" {
   default     = "dev"
 }
 
-resource "aws_instance" "example" {
+resource "aws_instance" "my-instance" {
   ami           = "ami-123456"
   instance_type = var.environment == "prod" ? "t2.large" : "t2.micro"
 }
+```
+
+#### [For Expression](https://developer.hashicorp.com/terraform/language/expressions/for)
+```t
+[for s in var.list : upper(s)]
 ```
