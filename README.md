@@ -1172,6 +1172,12 @@ terraform apply
 terraform workspace delete development
 ```
 
+### [Null Resource](https://developer.hashicorp.com/terraform/language/resources/provisioners/null_resource)
+The `null_resource` resource implements the standard resource lifecycle but takes no further action. It's a special type of resource that doesn't actually create any infrastructure like as AWS, GCP & Azure.
+
+#### Triggers
+The triggers argument allows specifying an arbitrary set of values that, when changed, will cause the resource to be replaced.
+
 ### [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
 Provisioners in Terraform are used to execute scripts or commands on a local or remote machine as part of the resource creation or destruction process. They can be used to bootstrap resources, configure servers, or run any other kind of initialization.
 

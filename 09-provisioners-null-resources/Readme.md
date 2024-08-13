@@ -1,3 +1,6 @@
+**Null Resource:** The `null_resource` is a resource type provided by the null provider. It's a special type of resource that doesn't actually create any infrastructure like as AWS, GCP & Azure.
+
+
 **Provisioners** in Terraform are used to execute scripts or commands on a local or remote machine as part of the resource creation or destruction process. They can be used to bootstrap resources, configure servers, or run any other kind of initialization.
 
 Create public & private key
@@ -24,3 +27,4 @@ Login to EC2 Instance from Terminal
 ```bash
 ssh -i ~/.ssh/id_rsa ubuntu@EC2_Instant_Public_IP
 ```
+

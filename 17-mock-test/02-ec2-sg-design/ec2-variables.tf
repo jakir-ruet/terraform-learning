@@ -6,7 +6,7 @@ variable "instance_type" {
 }
 
 # AWS EC2 instance key pair
-variable "instance_keypain" {
+variable "instance_keypair" {
   description = "AWS EC2 key pair"
   type        = string
   default     = "terraform-key"
