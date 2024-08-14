@@ -3,7 +3,7 @@ resource "null_resource" "null-resouce-eip" {
   depends_on = [module.ec2_public]
   connection {
     type        = "ssh"
-    host        = aws_eip.ec2_bastion_eip
+    host        = aws_eip.ec2_bastion_eip # comes from elastic-ip.tf
     user        = "ec2-user"
     password    = ""
     private_key = file("private-key/private-key.pem")
@@ -25,10 +25,10 @@ resource "null_resource" "null-resouce-eip" {
     #  on_failure  = continue
   }
   # Local Exec Provisioner:  local-exec provisioner (Destroy-Time Provisioner >> Triggered during deletion of Resource)
-  provisioner "local-exec" {
-    command     = "echo 'Destroy time provisioner $(date)' >> destroy-time-prov.txt"
-    working_dir = "local-exec-output-files/"
-    when        = "destroy"
-    # on_failure  = "continue"
-  }
+  #   provisioner "local-exec" {
+  #     command     = "echo 'Destroy time provisioner $(date)' >> destroy-time-prov.txt"
+  #     working_dir = "local-exec-output-files/"
+  #     when        = destroy
+  #     # on_failure  = "continue"
+  #   }
 }

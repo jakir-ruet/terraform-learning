@@ -8,7 +8,7 @@ output "ec2_public_ids" {
   value       = module.ec2_public.id
 }
 # EC2 bastion public ip
-output "ec2_public_ids" {
+output "ec2_public_ip" {
   description = "List of public instance ids"
   value       = module.ec2_public.public_ip
 }

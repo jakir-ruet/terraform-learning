@@ -21,3 +21,10 @@ openssl genpkey -algorithm RSA -out private-key.pem -aes256 -pkeyopt rsa_keygen_
 - Use Local Exec Provisioner
 - Use Depends_on Meta Argument
 
+**Command**
+```bash
+terraform init
+terraform validate
+terraform plan
+terraform apply
+```

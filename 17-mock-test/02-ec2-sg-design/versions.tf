@@ -10,7 +10,7 @@ terraform {
     # its use for null-resource-provisioners.tf
     null = {
       source  = "hashicorp/null"
-      version = "~> 5.0"
+      version = "~> 3.0"
     }
   }
 }
