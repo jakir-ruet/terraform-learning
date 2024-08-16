@@ -4,7 +4,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["amazon/ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-20240701.1"] # collect from AMI's
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-20240701.1"] # collect from AMI's
 
   }
 
@@ -14,12 +14,12 @@ data "aws_ami" "ubuntu" {
   }
 
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "architecture"
+    values = ["x86_64"]
   }
 
   filter {
-    name   = "architecture"
-    values = ["x86_64"]
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
