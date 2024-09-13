@@ -11,5 +11,5 @@ Terraform has a variety of built-in functions that can be used to perform variou
 - for loop > Map Advanced
 
 #### Terraform Splat Operators
-- Legacy Splat Operator [.*] > Full Splat Operator
-- Generic Splat Operator [*] > Full Splat Operator
+- Legacy Splat Operator .* > Full Splat Operator
+- Generalized (Latest) Splat Operator [*] > Full Splat Operator
