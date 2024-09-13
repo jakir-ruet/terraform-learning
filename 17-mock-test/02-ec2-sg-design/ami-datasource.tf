@@ -4,7 +4,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-20240701.1"] # collect from AMI's
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"] # collect from AMI's
 
   }
 

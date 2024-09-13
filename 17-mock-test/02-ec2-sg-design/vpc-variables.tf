@@ -33,7 +33,7 @@ variable "vpc_public_subnets" {
 variable "vpc_private_subnets" {
   description = "The VPC's private subnets"
   type        = list(string)
-  default     = ["10.0.3.0/24", "10.0.4.0/24"]
+  default     = ["10.0.3.0/24", "10.0.4.0/24", "10.0.5.0/24"]
 }
 
 # Define database subnets
