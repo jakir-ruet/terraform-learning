@@ -1173,7 +1173,7 @@ terraform workspace delete development
 ```
 
 ### [Null Resource](https://developer.hashicorp.com/terraform/language/resources/provisioners/null_resource)
-The `null_resource` resource implements the standard resource lifecycle but takes no further action. It's a special type of resource that doesn't actually create any infrastructure like as AWS, GCP & Azure.
+The `null_resource` resource implements the standard resource lifecycle but takes no further action. Instead, it acts as a placeholder that can trigger actions based on changes to other resources or inputs. It's a special type of resource that doesn't actually create any infrastructure like as AWS, GCP & Azure.
 
 #### Triggers
 The triggers argument allows specifying an arbitrary set of values that, when changed, will cause the resource to be replaced.
