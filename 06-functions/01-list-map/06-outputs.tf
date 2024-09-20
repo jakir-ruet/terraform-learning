@@ -28,14 +28,14 @@ output "generalized_splat_instance_instancedns" {
   value       = aws_instance.example_list.example_list[*].public_dns
 }
 
-# Using map in legacy splat operator (*), map return
-output "legacy_splat_instance_instancedns" {
-  description = "Legacy Splat Operator"
-  value       = aws_instance.example_list.example_map.*.public_dns
-}
+# # Using map in legacy splat operator (*), map return
+# output "legacy_splat_instance_instancedns" {
+#   description = "Legacy Splat Operator"
+#   value       = aws_instance.example_list.example_map.*.public_dns
+# }
 
-# Using map in generalized splat operator [*], map return
-output "generalized_splat_instance_instancedns" {
-  description = "generalized Splat Operator"
-  value       = aws_instance.example_list.example_map[*].public_dns
-}
+# # Using map in generalized splat operator [*], map return
+# output "generalized_splat_instance_instancedns" {
+#   description = "generalized Splat Operator"
+#   value       = aws_instance.example_list.example_map[*].public_dns
+# }
