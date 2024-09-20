@@ -8,7 +8,7 @@ openssl genpkey -algorithm RSA -out private-key.pem -aes256 -pkeyopt rsa_keygen_
 ```
 - Create `local-exec-output-files` named directory where `local-exec` provisioner creates a file (creation-time provisioner)
 
-##### Road Man
+##### Roadmap
 - Design a Virtual Private Cloud (VPC)
 - Design a Security Group (SG)
 - Design a Elastic Compute Cloud (EC2) 
@@ -17,14 +17,24 @@ openssl genpkey -algorithm RSA -out private-key.pem -aes256 -pkeyopt rsa_keygen_
   - A EC2 Instance (Private) > SSH Port 22 & 80 Enable  
 - Configure Elastic IP (EIP)
 - Null Provisioner
-- Use Remote Exec Provisioner
-- Use Local Exec Provisioner
-- Use Depends_on Meta Argument
+  - Use Remote Exec Provisioner
+  - Use Local Exec Provisioner
+  - Use Depends_on Meta Argument
 
-**Command**
+##### Execution, Validate, Plan, Apply & Destroy
 ```bash
 terraform init
 terraform validate
 terraform plan
-terraform apply
+terraform apply -auto-approve
+terraform destroy
+```
+
+##### Test & Verify
+```bash
+ssh -i private-key/private-key.pem ubuntu@PublicIPBastionHost
+ssh -i private-key/private-key.pem ubuntu@18.225.27.67
+curl http://Private-Instance-01-Private-Ip 
+curl http://Private-Instance-02-Private-Ip
+ssh -i /tmp/private-key.pem ubuntu@Private-Instance-01-Private-Ip
 ```

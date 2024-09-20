@@ -1,15 +1,11 @@
-# https://developer.hashicorp.com/terraform/language/values/locals
 locals {
-  owners = var.developer
-  envs   = var.environment
-  name   = "${var.developer}-${var.environment}" # Or
-  # name = "${local.owners}-${local.envs}"
+  owner     = "Jakir"
+  org       = "LapisSoft"
+  authority = var.system_admin # Assuming var.system_admin is a valid variable
+  env       = var.environment  # Assuming var.environment is a valid variable
 
   common_tags = {
-    # Owners = "${local.owners}"
-    # Env = "${local.envs}"
-    # Or
-    Owners = local.owners
-    Env    = local.envs
+    app_owner = local.owner
+    org_name  = local.org
   }
 }
