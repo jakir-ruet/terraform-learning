@@ -1,3 +1,2 @@
 VPC created on $(date) & VPC Id: vpc-0014f22036e2e4754
 VPC created on $(date) & VPC Id: vpc-0014f22036e2e4754
-VPC created on $(date) & VPC Id: vpc-0ef030590cfced511

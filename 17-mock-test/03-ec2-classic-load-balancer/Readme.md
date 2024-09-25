@@ -1,4 +1,4 @@
-### Design EC2 Instance & Security Group
+### Design EC2 Instance, Security Group & Classic Load Balancer
 #### Sept-01: Pre-Requisite
 - Create Private Key in `private-key.pem` file
 ```bash
@@ -20,6 +20,7 @@ openssl genpkey -algorithm RSA -out private-key.pem -aes256 -pkeyopt rsa_keygen_
   - Use Remote Exec Provisioner
   - Use Local Exec Provisioner
   - Use Depends_on Meta Argument
+- Classic Load Balancer
 
 ##### Execution, Validate, Plan, Apply & Destroy
 ```bash
