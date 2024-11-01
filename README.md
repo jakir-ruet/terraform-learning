@@ -42,6 +42,11 @@ Some of the key features of Terraform that make it a versatile and powerful tool
   - Agent less
 
 #### [Installation of Terraform](https://developer.hashicorp.com/terraform/install)
+Version check
+```bash
+terraform version
+```
+
 Install in CodeSpace
 ```bash
 wget https://releases.hashicorp.com/terraform/1.4.5/terraform_1.4.5_linux_amd64.zip
@@ -69,7 +74,7 @@ Configuration `Identity and Access Management (IAM)` on AWS Console.
 - Check the users `aws iam list-users`
 - Check the s3 resources `aws s3 ls`
 
-#### Basic Command/[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)
+#### Basic Command
 
 There are a handful of basic terraform commands, including:
 |  SL   | Command              | Explanation                            |
@@ -85,6 +90,7 @@ There are a handful of basic terraform commands, including:
 rm -rf .terraform*
 rm -rf terraform.tfstate*
 ```
+[Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)
 
 ### Basic Syntax
 Understand Terraform Configuration Language's Basics
